@@ -1,0 +1,22 @@
+<error>
+   <div class="modal error w100" id='error'>
+      <div class="modal-out">
+         <div class="modal-in">
+            <a click={close} class='close'><img src="img/close.png" alt=""></a>
+            <div class="flex">
+               <img src="img/error.png" alt="">
+               <div class="text">
+                  <h3>Error: Название ошибки</h3>
+                  <p>Краткое описание ошибки и что с этим делать</p>
+               </div>
+            </div>
+         </div>
+      </div>
+   </div>
+
+this.close = function close(e){
+   console.log("close error window");
+   this.unmount(true);
+}
+
+</error>

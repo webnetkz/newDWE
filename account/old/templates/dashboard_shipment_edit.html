@@ -1,0 +1,186 @@
+<div class="title">
+   <h1>Редактирование партии {{shipments.edit.id}}</h1>
+</div>
+<div class="sort">
+   <form action="sort.php" method="post">
+      <label class='checkbox' for="selectAll">
+         <input type="checkbox" name='selectAll' id='selectAll' checked>
+         <span class='checkbox__text'>Выбрать все</span>
+      </label>
+      <select name="doings" id="doings1">
+         <option>Переместить в место 2</option>
+         <option value="1">Переместить в место 2</option>
+         <option value="2">Действие 2</option>
+         <option value="3">Действие 4</option>
+         <option value="4">Действие 4</option>
+      </select>
+      <select style='margin: 0px 12px 0px 0px;' name="doings" id="doings">
+         <option>Действия</option>
+         <option value="1">Действие 1</option>
+         <option value="2">Действие 2</option>
+         <option value="3">Действие 4</option>
+         <option value="4">Действие 4</option>
+      </select>
+      <button class='cont'>Продолжить</button>
+   </form>
+
+</div>
+
+
+
+<div ng-repeat="place in cache.shipments.places.list | filter:{shipmentID: shipments.edit.id}" class="part part2">
+   <div class="part-title">
+      <h2>Место {{place.id}}</h2>
+      <div class="bt">
+         <a ng-click="place.delete()" class="click"><img src="img/icon-del.png" alt=""></a>
+         <a ng-click="shipments.places.edit = place; actions.appendDelivery()" class='cont'>Добавить посылку</a>
+      </div>
+   </div>
+   <form class="table">
+      <table>
+         <thead>
+            <tr>
+               <td style='min-width: 60px;'></td>
+               <td style='min-width: 77px;'>ID</td>
+               <td style='min-width: 109px;'>Отправитель</td>
+               <td style='min-width: 120px;'>Получатель</td>
+               <td style='min-width: 113px;'>
+                  <div class="flex"><span>Страна<br>получателя</span> <a href=""><img src="img/sort.png" alt=""></a></div>
+               </td>
+               <td style='min-width: 113px;'>
+                  <div class="flex"><span>Трек-номер</span> <a href=""><img src="img/sort.png" alt=""></a></div>
+               </td>
+               <td style='min-width: 113px;'>
+                  <div class="flex"><span>Дата создания</span> <a href=""><img src="img/sort.png" alt=""></a></div>
+               </td>
+               <td style='min-width: 103px;'>
+                  <div class="flex"><span>Кол-во мест</span> <a href=""><img src="img/sort.png" alt=""></a></div>
+               </td>
+               <td style='min-width: 71px;'>
+                  <div class="flex"><span>Вес</span> <a href=""><img src="img/sort.png" alt=""></a></div>
+               </td>
+               <td style='min-width: 93px;'>
+                  <div class="flex"><span>Объем</span> <a href=""><img src="img/sort.png" alt=""></a></div>
+               </td>
+               <td style='min-width: 122px;'>Статус</td>
+
+               <td style='min-width: 70px;'></td>
+               <td rowspan='2' style='min-width: 70px;'>
+
+               </td>
+            </tr>
+         </thead>
+         <tbody>
+            <tr ng-repeat="delivery in cache.deliveries.list | filter:{placeID: place.id}"">
+               <td>
+                  <label class='checkbox' for="p2">
+                     <input type="checkbox" name='p2' id='p2'>
+                     <span class='checkbox__text'></span>
+                  </label>
+               </td>
+               <td><a href="#info">{{delivery.id}}</a></td>
+               <td><a href="#error">{{cache.clients.from.id[delivery.from].name}}</a></td>
+               <td>{{cache.clients.to.id[delivery.to].name}}</td>
+               <td>{{cache.countries.id[cache.clients.to.id[delivery.to].country].code}}</td>
+               <td>{{delivery.barcode}}</td>
+               <td>12.05.2018</td>
+               <td>{{delivery.places}}</td>
+               <td>{{delivery.weight}} кг</td>
+               <td>{{delivery.volume}} м2</td>
+               <td>{{cache.deliveries.status.id[delivery.status].name}}</td>
+               <td class='bt'>
+                  <a ng-click="delivery.unsetPlace()" class="click"><img src="img/icon-del.png" alt=""></a>
+               </td>
+            </tr>
+         </tbody>
+      </table>
+   </form>
+</div>
+
+
+<div ng-click="newShipmentPlace(shipments.edit.id)" class="part part3 empty">
+   <div class="part-title">
+      <h2>+ Добавить место</h2>
+   </div>
+</div>
+<div class="part-footer">
+   <div class="left">
+      <p>Вес: 16 кг</p>
+      <p>Объем: 100 м2</p>
+   </div>
+   <a ng-click="nav('dashboard','shipments')" class='v1'>Сохранить партию</a>
+</div>
+
+
+
+<div ng-if="actions.selectDelivery.isVisible" class="modal w100" id='delete' ng-init="page=0; limit=20;">
+   <div class="modal-out">
+      <div class="modal-in" style="width:100%">
+         <a ng-click="actions.selectDelivery.cancel()" class='close click'><img src="img/close.png" alt=""></a>
+         <h3>Выбрать посылку:</h3>
+
+         <input ng-model="filter" style="width:100%" placeholder="Поиск...">
+         <br/>
+         <br/>
+
+         <table style="width:100%">
+            <tbody>
+               <tr ng-repeat="delivery in (listDeliveries = (cache.deliveries.list | filter:{isAddressOk : true} | filter: filter) | limitTo: limit : page*limit)"
+                  ng-style="delivery.isAddressOk ? {} : {'background-color':'red'}" class="over click" ng-click="delivery.setPlace(shipments.edit.id, shipments.places.edit.id); actions.selectDelivery.cancel()">
+                  <td>
+                     <label ng-click="delivery.isSelected = !delivery.isSelected; menu.isAllSelected = false; $event.stopPropagation()" ng-class="delivery.isSelected ? 'checked checkbox' : 'checkbox'" for="p2">
+                        <span class='checkbox__text'></span>
+                     </label>
+                  </td>
+                  <td><a href="#info">{{delivery.id}}</a></td>
+                  <td><a href="#error">{{cache.clients.from.id[delivery.from].name}}</a></td>
+
+                  <td ng-if="delivery.isAddressOk">{{cache.clients.to.id[delivery.to].name}}</td>
+                  <td ng-if="!delivery.isAddressOk">-----</td>
+
+                  <td>{{cache.countries.id[cache.clients.to.id[delivery.to].country].code}}</td>
+                  <td>{{delivery.barcode}}</td>
+                  <td>12.05.2018</td>
+                  <td>{{delivery.places}}</td>
+                  <td>{{delivery.weight}} кг</td>
+                  <td>{{delivery.volume}} м2</td>
+
+                  <td>{{cache.deliveries.status.id[delivery.status].name}}</td>
+               </tr>
+            </tbody>
+         </table>
+
+
+         <pager length="listDeliveries.length" page="page" limit="limit"></pager>
+
+
+         <div class="flex">
+            <a ng-click="actions.selectDelivery.cancel()"  class='cont' href="#">Отмена</a>
+         </div>
+      </div>
+   </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,376 @@
+<div class="title">
+   <h1>Создание отправления</h1>
+</div>
+<form action="" class="form">
+   <div class="title border">
+      <h2>Отправитель</h2>
+      <div class="right">
+         <a ng-click="actions.selectFrom.open()" class='cont'>Выбрать контрагента</a>
+         <a href=""><img src="img/updown.png" alt=""></a>
+      </div>
+   </div>
+   <h4>Личные данные</h4>
+   <div class="flex">
+      <input type="text" ng-model="from.company" placeholder="Наименование компании *" required>
+<!--
+      <input type="text" name='name' placeholder="Фамилия *" required>
+-->
+      <input type="text" ng-model="from.name"  placeholder="Имя *" required>
+      <input type="text" ng-model="from.phone" placeholder="Номер телефона *" required>
+      <input type="text" ng-model="from.email" placeholder="E-mail *" required>
+   </div>
+   <h4>Адрес</h4>
+   <div>
+      <input type="text" name='name' placeholder="Наименование компании *" required>
+      <select ng-model="from.countryId" convert-to-number>
+         <option ng-repeat="country in cache.countries.list" value="{{country.id}}">{{country.name}}</option>
+      </select>
+
+      <input type="text" ng-model="from.filter.zip" ng-change="from.filter.doZip()" placeholder="Поиск по Индексу...">
+
+
+      <br/>
+      <br/>
+      <input ng-model="from.regionTypeText"
+             ng-click="from.regionTypeText=''; from.regionText=''; from.cityTypeText=''; from.cityText=''; from.streetTypeText=''; from.streetText=''"
+             ng-focus="from.isRegionTypeEdit=true" ng-disabled="!from.countryId" class="typer"></input>
+      <div ng-show="from.isRegionTypeEdit" class="dropper-type">
+         <div ng-repeat="regionType in cache.regionTypes.list | filter : from.regionTypeText"
+              ng-click="from.regionTypeText=regionType.name; from.regionTypeId = regionType.id; from.isRegionTypeEdit=false" class="click">{{regionType.name}}</div>
+      </div>
+      <button ng-click="from.regionTypeId = newRegionType(from.countryId, from.regionTypeText)" ng-disabled="!from.countryId" class="adder">+</button>
+      <button ng-click="deleteRegionType(); from.regionTypeText=''; from.regionText=''; from.cityTypeText=''; from.cityText=''; from.streetTypeText=''; from.streetText=''" ng-disabled="!from.regionTypeId" class="deleter">-</button>
+
+
+      <input ng-model="from.regionText" ng-focus="from.isRegionEdit=true" ng-disabled="!from.regionTypeId" class=""></input>
+      <div ng-show="from.isRegionEdit" class="dropper">
+         <div ng-repeat="region in cache.regions.list | filter : {typeId: from.regionTypeId} | filter: from.regionText | limitTo:10"
+              ng-click="from.regionText=region.name; from.regionId = region.id; from.isRegionEdit=false"
+              class="click">{{region.name}}</div>
+      </div>
+      <button ng-click="from.regionId = newRegion(from.countryId, from.regionTypeId, from.regionText)" class="adder">+</button>
+      <button ng-disabled="!from.regionId" class="deleter">-</button>
+
+
+      <br/>
+      <br/>
+
+
+      <input ng-model="from.cityTypeText" ng-focus="from.isCityTypeEdit=true" ng-disabled="!from.regionId" class="typer"></input>
+      <div ng-show="from.isCityTypeEdit" class="dropper-type">
+         <div ng-repeat="cityType in cache.cityTypes.list | filter : from.cityTypeText"
+              ng-click="from.cityTypeText=cityType.name; from.cityTypeId = cityType.id; from.isCityTypeEdit=false" class="click">{{cityType.name}}</div>
+      </div>
+      <button ng-click="from.cityTypeId = newCityType(from.countryId, from.cityTypeText)" ng-disabled="!from.regionId" class="adder">+</button>
+      <button ng-click="deleteCityType(); from.cityTypeId=null" ng-disabled="!from.cityTypeId" class="deleter">-</button>
+
+
+      <input ng-model="from.cityText" ng-focus="from.isCityEdit=true" ng-disabled="!from.cityTypeId" class=""></input>
+      <div ng-show="from.isCityEdit" class="dropper">
+         <div ng-repeat="city in cache.cities.list | filter: {typeCityID: from.cityTypeId} | filter:{regionId: from.regionId} | filter: from.cityText | limitTo:10"
+              ng-click="from.cityText=city.name; from.cityId = city.id; from.isCityEdit=false"
+              class="click">{{city.name}}</div>
+      </div>
+<!--
+      <div ng-show="from.isCitySelect" class="dropper">
+         <div ng-repeat="city in from.filter.cities | limitTo:10"
+              ng-click="from.cityText=city.name; from.cityId = city.id; from.isCityEdit=false"
+              class="click">{{city.name}}</div>
+      </div>
+-->
+      <button ng-click="from.cityId = newcity(from.countryId, from.regionId, from.cityTypeId, from.cityText)" class="adder">+</button>
+      <button ng-disabled="!from.cityId" class="deleter">-</button>
+
+      <br/>
+      <br/>
+
+
+      <input ng-model="from.streetTypeText" ng-focus="from.isStreetTypeEdit=true" ng-disabled="!from.cityId" class="typer"></input>
+      <div ng-show="from.isStreetTypeEdit" class="dropper-type">
+         <div ng-repeat="streetType in cache.streetTypes.list | filter : from.streetTypeText"
+              ng-click="from.streetTypeText=streetType.name; from.streetTypeId = streetType.id; from.isStreetTypeEdit=false" class="click">{{streetType.name}}</div>
+      </div>
+      <div ng-show="from.isStreetSelect" class="dropper">
+         <div ng-repeat="street in from.filter.streets | limitTo:10"
+              ng-click="from.cityText=city.name; from.cityId = city.id; from.isCityEdit=false"
+              class="click">{{street.name}}</div>
+      </div>
+      <button ng-click="from.streetTypeId = newStreetType(from.countryId, from.streetTypeText)" ng-disabled="!from.cityId" class="adder">+</button>
+      <button ng-click="deletestreetType(); from.streetTypeId=null" ng-disabled="!from.streetTypeId" class="deleter">-</button>
+
+
+      <input ng-model="from.streetText" ng-focus="from.isStreetEdit=true" ng-disabled="!from.streetTypeId" class=""></input>
+      <div ng-show="from.isStreetEdit" class="dropper">
+         <div ng-repeat="street in cache.streets.list | filter: {typeStreetID: from.streetTypeId} | filter:{cityId: from.cityId} | filter: from.streetText | limitTo:10"
+              ng-click="from.streetText=street.name; from.streetId = street.id; from.isStreetEdit=false"
+              class="click">{{street.name}}</div>
+      </div>
+      <button ng-click="from.streetId = newStreet(from.countryId, from.regionId, from.streetTypeId, from.streetText)" class="adder">+</button>
+      <button ng-disabled="!from.streetId" class="deleter">-</button>
+
+      <br/>
+      <br/>
+
+
+      <input type="text" name='name' class='small' placeholder="кв/оф *" required>
+      <input type="text" name='name' placeholder="Другое">
+<!--
+      <input type="text" name='name' placeholder="Тип здания" required>
+-->
+   </div>
+   <div class="title border">
+      <h2>Посылки</h2>
+      <div class="right">
+         <a ng-click="actions.selectTo.open()" class='cont'>Выбрать контрагента</a>
+         <a href=""><img src="img/updown.png" alt=""></a>
+      </div>
+   </div>
+   <div class="flex">
+<!--
+      <input type="text" name='name' placeholder="Фамилия *" required>
+-->
+      <input type="text" ng-model="to.name" placeholder="Имя *" required>
+      <input type="text" ng-model="to.phone" placeholder="Номер телефона *" required>
+      <input type="text" ng-model="to.email" placeholder="E-mail *" required>
+   </div>
+   <h4>Адрес получателя</h4>
+   <div class="flex">
+      <input type="text" ng-model="to.company" placeholder="Наименование компании *" required>
+      <select ng-model="cache.buildings.id[to.address.buildingId].countryId" convert-to-number>
+         <option ng-repeat="country in cache.countries.list" value="{{country.id}}">{{country.name}}</option>
+      </select>
+      <select ng-model="cache.buildings.id[to.address.buildingId].regionId" convert-to-number>
+         <option ng-repeat="region in cache.regions.list | limitTo: 10" value="{{region.id}}">{{region.name}}</option>
+      </select>
+      <select ng-model="cache.buildings.id[to.address.buildingId].cityId" convert-to-number>
+         <option ng-repeat="city in cache.cities.list | limitTo: 10" value="{{city.id}}">{{city.name}}</option>
+      </select>
+<!--
+      <input type="text" name='name' placeholder="Микрорайон">
+-->
+   </div>
+   <div class="flex">
+      <select ng-model="cache.buildings.id[to.address.buildingId].streetId" convert-to-number>
+         <option ng-repeat="street in cache.streets.list | limitTo: 10" value="{{street.id}}">{{street.name}}</option>
+      </select>
+      <input type="text" ng-model="cache.buildings.id[to.address.buildingId].name" class='small' placeholder="Дом *" required>
+      <input type="text" name='name' class='small' placeholder="Корпус">
+      <input type="text" ng-model="to.address.path" class='small' placeholder="кв/оф *" required>
+      <input type="text" name='name' placeholder="Другое">
+<!--
+      <input type="text" name='name' placeholder="Тип здания" required>
+-->
+   </div>
+   <h4>Данные о посылке</h4>
+   <div class="flex">
+      <input type="text" ng-model="places" placeholder="Кол-во мест, шт *" required>
+<!--
+      <select name="" id="">
+         <option value="">Тип оплаты *</option>
+         <option value="">Город 1</option>
+         <option value="">Город 2</option>
+      </select>
+      <select name="" id="">
+         <option value="">Валюта *</option>
+         <option value="">Город 1</option>
+         <option value="">Город 2</option>
+      </select>
+-->
+      <input type="text" ng-model="weight" placeholder="Вес, кг *" required>
+      <input type="text" placeholder="Ценность" required>
+<!--
+      <select name="" id="">
+         <option value="">Вид отправления *</option>
+         <option value="">Город 1</option>
+         <option value="">Город 2</option>
+      </select>
+-->
+      <input type="text" ng-model="volume" placeholder="Объем, м3 *" required>
+      <input type="text" name='name' placeholder="Сумма страховки" required>
+<!--
+      <select name="" id="">
+         <option value="">Способ пересылки *</option>
+         <option value="">Город 1</option>
+         <option value="">Город 2</option>
+      </select>
+-->
+      <input type="text" ng-model="length" ng-change="volume=length*width*height*0.000001" class='small' placeholder="Длина, см *" required>
+      <input type="text" ng-model="width"  ng-change="volume=length*width*height*0.000001" class='small' placeholder="Ширина, см *">
+      <input type="text" ng-model="height" ng-change="volume=length*width*height*0.000001" class='small' placeholder="Высота, см *" required>
+      <input type="text" ng-model="description" class='big' placeholder="Примечание">
+   </div>
+   <div class="flex">
+      <div class="left">
+         <div class="addPhotos">
+            <label class='fileInput'>
+                 <input type="file" name="file">
+                 <span><img src="img/icon-image.png" alt="">Добавить фото</span>
+             </label>
+            <div class="photos">
+               <div class="photo">
+                  <img src="img/no-photo2.png" alt="">
+                  <a href=""><img src="img/delete_photo.png" class='delphoto' alt=""></a>
+               </div>
+               <div class="photo">
+                  <img src="img/no-photo2.png" alt="">
+                  <a href=""><img src="img/delete_photo.png" class='delphoto' alt=""></a>
+               </div>
+               <div class="photo">
+                  <img src="img/no-photo2.png" alt="">
+                  <a href=""><img src="img/delete_photo.png" class='delphoto' alt=""></a>
+               </div>
+            </div>
+         </div>
+         <div class="addFiles">
+            <label class='fileInput'>
+                 <input type="file" name="file">
+                 <span><img src="img/icon-image.png" alt="">Добавить файл</span>
+             </label>
+            <div class="files">
+               <div class="file">
+                  <a href=''>asdaksdhaklsjdh.docx</a>
+                  <a href=""><img src="img/delete_photo.png" class='delfile' alt=""></a>
+               </div>
+               <div class="file">
+                  <a href=''>asdaksdhaklsjdh.docx</a>
+                  <a href=""><img src="img/delete_photo.png" class='delfile' alt=""></a>
+               </div>
+               <div class="file">
+                  <a href=''>asdaksdhaklsjdh.docx</a>
+                  <a href=""><img src="img/delete_photo.png" class='delfile' alt=""></a>
+               </div>
+            </div>
+         </div>
+      </div>
+      <div class="right">
+            <p class='vSum'><span>Стоимость доставки</span><span>35</span></p>
+            <p class='vSum'><span>Стоимость посылки</span><span>315</span></p>
+            <p class='vSum'><span>Итого к оплате</span><span>350</span></p>
+      </div>
+   </div>
+   <div class="btns bn">
+      <div class="l">
+         {{weight}} {{volume}}
+         <button ng-click="new_parcel.create(from.id, to.address.id, cache.buildings.id[to.address.buildingId].countryId, description, weight, volume, places)" class='v1 small'>Добавить</button>
+         <a class='v1 small err' href="">Отмена</a>
+      </div>
+   </div>
+</form>
+<form action="" class="form">
+   <div class="pack-item">
+      <div class="info">
+         <p>Получатель: <a href="">Васечкин А. В. <img src="img/big-arrow-down.png" alt=""></a></p>
+         <p>Кол-во мест: <b>2</b></p>
+         <p>Общий вес: <b>2 кг</b></p>
+         <p>Объем: <b>2 м3</b></p>
+      </div>
+      <div class="doings">
+         <a href=""><img src="img/icon-edit.png" alt=""></a>
+         <a href=""><img src="img/icon-del.png" alt=""></a>
+      </div>
+   </div>
+   <div class="pack-item">
+      <div class="info">
+         <p>Получатель: <a href="">Васечкин А. В. <img src="img/big-arrow-down.png" alt=""></a></p>
+         <p>Кол-во мест: <b>2</b></p>
+         <p>Общий вес: <b>2 кг</b></p>
+         <p>Объем: <b>2 м3</b></p>
+      </div>
+      <div class="doings">
+         <a href=""><img src="img/icon-edit.png" alt=""></a>
+         <a href=""><img src="img/icon-del.png" alt=""></a>
+      </div>
+   </div>
+   <div class="pack-item itog">
+      <div class="info">
+         <p class='flex-sb'><b>ИТОГО:</b> <span>Посылок: <b>2</b></span></p>
+         <p>Кол-во мест: <b>4</b></p>
+         <p>Общий вес: <b>4 кг</b></p>
+         <p>Объем: <b>4 м3</b></p>
+      </div>
+   </div>
+   <div class="btns bn">
+      <div class="l">
+         <a href="" class="cont"><img src="img/barcode.png" alt=""> Печать шрих кода</a>
+         <a href="" class="cont"><img src="img/print.png" alt=""> Печать</a>
+      </div>
+      <div class="l">
+         <button ng-click="nav('dashboard','parcels')" class='v1 small'>На упаковку</button>
+         <a ng-click="nav('dashboard','parcels')" class='v1 small err'><img src="img/delicon.png" alt=""> Удалить</a>
+      </div>
+   </div>
+</form>
+
+
+<div ng-if="actions.selectFrom.isVisible" class="modal w100" id='delete' ng-init="page=0; limit=20;">
+   <div class="modal-out">
+      <div class="modal-in" style="width:100%">
+         <a ng-click="actions.selectFrom.cancel()" class='close click'><img src="img/close.png" alt=""></a>
+         <h3>Выбрать отправителя:</h3>
+
+         <input ng-model="filter" style="width:100%" placeholder="Поиск...">
+         <br/>
+         <br/>
+
+         <table style="width:100%">
+            <tbody>
+               <tr ng-repeat="from in (listFrom = (cache.clients.from.list | filter: filter) | limitTo: limit : page*limit)"
+                  class="over click" ng-click="selectFrom(from); actions.selectFrom.cancel()">
+                  <td><a href="#info">{{from.id}}</a></td>
+                  <td><a href="#error">{{from.name}}</a></td>
+                  <td>{{from.company}}</td>
+                  <td>{{from.email}}</td>
+                  <td>{{from.phone}}</td>
+
+                  <td>{{cache.countries.id[from.country]}}</td>
+               </tr>
+            </tbody>
+         </table>
+
+
+         <pager length="listFrom.length" page="page" limit="limit"></pager>
+
+
+         <div class="flex">
+            <a ng-click="actions.selectFrom.cancel()"  class='cont' href="#">Отмена</a>
+         </div>
+      </div>
+   </div>
+</div>
+<div ng-if="actions.selectTo.isVisible" class="modal w100" id='delete' ng-init="page=0; limit=20;">
+   <div class="modal-out">
+      <div class="modal-in" style="width:100%">
+         <a ng-click="actions.selectTo.cancel()" class='close click'><img src="img/close.png" alt=""></a>
+         <h3>Выбрать получателя:</h3>
+
+         <input ng-model="filter" style="width:100%" placeholder="Поиск...">
+         <br/>
+         <br/>
+
+         <table style="width:100%">
+            <tbody>
+               <tr ng-repeat="to in (listTo = (cache.clients.to.list | filter: filter) | limitTo: limit : page*limit)"
+                  class="over click" ng-click="selectTo(to); actions.selectTo.cancel()">
+                  <td><a href="#info">{{to.id}}</a></td>
+                  <td><a href="#error">{{to.name}}</a></td>
+                  <td>{{to.company}}</td>
+                  <td>{{to.email}}</td>
+                  <td>{{to.phone}}</td>
+
+                  <td>{{cache.countries.id[from.country]}}</td>
+               </tr>
+            </tbody>
+         </table>
+
+
+         <pager length="listTo.length" page="page" limit="limit"></pager>
+
+
+         <div class="flex">
+            <a ng-click="actions.selectTo.cancel()"  class='cont' href="#">Отмена</a>
+         </div>
+      </div>
+   </div>
+</div>
+
+

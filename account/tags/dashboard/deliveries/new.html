@@ -1,0 +1,624 @@
+<new_delivery>
+<form submit={planDelivery} class="form">
+   <div class="title border">
+
+      <h2><i18n>dashboard.new_delivery.form.from.title</i18n></h2>
+<!--
+      <div class="right">
+         <a ng-click="actions.selectFrom.open()" class='cont'><i18n>dashboard.new_delivery.form.from.private_info</i18n></a>
+         <a href=""><img src="img/updown.png" alt=""></a>
+      </div>
+-->
+   </div>
+
+
+   <h4><i18n>global.private_info</i18n></h4>
+   <div class="flex delivery new from">
+<!--
+      <input type="text" id="from-company" placeholder={this.i18n("dashboard.new_delivery.form.from.company.holder")} required>
+-->
+      <input type="text" id="from-name"    placeholder={this.i18n("dashboard.new_delivery.form.from.name.holder")}    required>
+      <input type="text" id="from-phone"   placeholder={this.i18n("dashboard.new_delivery.form.from.phone.holder")}   required>
+      <input type="text" id="from-email"   placeholder={this.i18n("dashboard.new_delivery.form.from.email.holder")}   required>
+   </div>
+
+
+   <br style="clear:both"/>
+   <br/>
+
+   <h4><i18n>global.address</i18n></h4>
+   <div class="flex delivery new from">
+      <select id="from-country" click={setFromFilter} change={setFromFilter} style="width:200px">
+         <option each={country in opts.model.cache.countries.list} value={country.id}>{country.name}</option>
+      </select>
+
+      <input type="text" id="from-zip"  change={setFromFilterZip}  onkeyup={setFromFilterZip} placeholder={this.i18n("dashboard.new_delivery.form.from.zip.holder")}  required>
+      <input type="text" id="from-city" change={setFromFilterCity} onkeyup={setFromFilterCity}  placeholder={this.i18n("dashboard.new_delivery.form.from.city.holder")} required>
+
+
+      <br/>
+
+
+      <br style="clear:both"/>
+
+      <table show={from.zips.length > 0} border="1" cellspacing="0" cellpadding="0" class="zip-table">
+         <tr>
+            <th><i18n>global.zip</i18n></th>
+            <th><i18n>global.region</i18n></th>
+            <th><i18n>global.city</i18n></th>
+         </tr>
+         <tr each={zip in from.zips} click={selectFromZip(zip)} class="clickable">
+            <td>{zip.number}</td>
+            <td>{this.parent.opts.model.cache.regionTypes.id[this.parent.opts.model.cache.regions.id[zip.regionId].typeId].name}&nbsp;{this.parent.opts.model.cache.regions.id[zip.regionId].name}</td>
+            <td>{this.parent.opts.model.cache.cities.id[zip.cityId].name}</td>
+         </tr>
+      </table>
+
+      <textarea id="from-address" style="margin-top:20px; width:100%; height:20%; min-height:100px; border-style: dashed;" placeholder={this.i18n("dashboard.new_delivery.form.from.address.holder")} required></textarea>
+   </div>
+
+   <br style="clear:both"/>
+   <br/>
+   <br/>
+
+
+<!--
+contragents
+   <div class="title border">
+      <h2>Посылки</h2>
+      <div class="right">
+         <a ng-click="actions.selectTo.open()" class='cont'>Выбрать контрагента</a>
+         <a href=""><img src="img/updown.png" alt=""></a>
+      </div>
+   </div>
+-->
+
+   <h2><i18n>dashboard.new_delivery.form.to.title</i18n></h2>
+
+   <h4><i18n>global.private_info</i18n></h4>
+   <div class="flex delivery new to">
+<!--
+      <input type="text" id="to-company" placeholder="Наименование компании *" required>
+-->
+      <input type="text" id="to-name" placeholder="Имя *" required>
+      <input type="text" id="to-phone" placeholder="Номер телефона *" required>
+      <input type="text" id="to-email" placeholder="E-mail *" required>
+   </div>
+
+   <br style="clear:both"/>
+   <br/>
+   <br/>
+
+   <h4><i18n>global.address</i18n></h4>
+   <div class="flex delivery new to">
+      <select id="to-country" change={setToFilter} style="width:200px">
+         <option each={country in opts.model.cache.countries.list} value={country.id}>{country.name}</option>
+      </select>
+      <input type="text" id="to-zip"  change={setToFilterZip}  onkeyup={setToFilterZip}  placeholder={this.i18n("dashboard.new_delivery.form.to.zip.holder")} required>
+      <input type="text" id="to-city" change={setToFilterCity} onkeyup={setToFilterCity} placeholder={this.i18n("dashboard.new_delivery.form.to.city.holder")} required>
+
+      <br/>
+
+      <br style="clear:both"/>
+
+      <table show={to.zips.length > 0} border="1" cellspacing="0" cellpadding="0" class="zip-table">
+         <tr>
+            <th><i18n>global.zip</i18n></th>
+            <th><i18n>global.region</i18n></th>
+            <th><i18n>global.city</i18n></th>
+         </tr>
+         <tr each={zip in to.zips} click={selectToZip(zip)} class="clickable">
+            <td>{zip.number}</td>
+            <td>{this.parent.opts.model.cache.regionTypes.id[this.parent.opts.model.cache.regions.id[zip.regionId].typeId].name}&nbsp;{this.parent.opts.model.cache.regions.id[zip.regionId].name}</td>
+            <td>{this.parent.opts.model.cache.cities.id[zip.cityId].name}</td>
+         </tr>
+      </table>
+
+      <textarea id="to-address" style="margin-top:20px; width:100%; height:20%; min-height:100px; border-style: dashed;" placeholder={this.i18n("dashboard.new_delivery.form.to.address.holder")} required></textarea>
+
+   </div>
+
+
+
+
+   <h4>Данные о посылке</h4>
+   <div class="flex">
+      <input type="number" id="items"  class='small dimension'              placeholder="Кол-во мест, шт *" required>
+      <input type="number" id="weight" class='small dimension' step="0.001" placeholder={this.i18n("global.weight") + ", " + this.i18n("global.kg") + " *"} required>
+
+      <input type="text"   id="value"     class='small dimension' placeholder={this.i18n("global.value")}>
+      <input type="text"   id="insurance" class='small dimension' placeholder={this.i18n("global.insurance")}>
+
+
+
+      <input type="number" id="volume"  class="dimension" step="0.001"  change={roundVolume}    onkeyup={clearDimension} placeholder={this.i18n("global.volume") + ", " + this.i18n("global.m3") + " *"} required>
+      <input type="number" id="length"  class='small dimension'         change={calcDimension}  onkeyup={calcDimension}  placeholder={this.i18n("global.length") + ", " + this.i18n("global.cm")}>
+      <input type="number" id="width"   class='small dimension'         change={calcDimension}  onkeyup={calcDimension}  placeholder={this.i18n("global.width")  + ", " + this.i18n("global.cm")}>
+      <input type="number" id="height"  class='small dimension'         change={calcDimension}  onkeyup={calcDimension}  placeholder={this.i18n("global.height") + ", " + this.i18n("global.cm")}>
+
+
+      <input type="text"   id="kuaidi"  class='small dimension'  placeholder={this.i18n("global.kuaidi")}>
+
+      <textarea id="description" class='big' placeholder={this.i18n("global.description")} required></textarea>
+   </div>
+
+
+   <div class="btns bn">
+      <div class="l">
+         <button click={addDelivery} class='v1 small'>Добавить</button>
+         <a click={clearDelivery} class='v1 small err'><i18n>global.clear_form</i18n></a>
+      </div>
+   </div>
+</form>
+
+
+
+
+
+
+<form class="form">
+   <div each={delivery, index in deliveries} class="pack-item">
+      <div class="info">
+         <p>Получатель: <a href="">{delivery.to.name} <img src="img/big-arrow-down.png" alt=""></a></p>
+         <p>Кол-во мест: <b>{delivery.items}</b></p>
+         <p>Общий вес: <b>{delivery.weight} кг</b></p>
+         <p>Объем: <b>{delivery.volume} м3</b></p>
+      </div>
+      <div class="doings">
+         <a class="clickable"><img src="img/icon-edit.png" alt=""></a>
+         <a click={cancelDelivery(index)} class="clickable"><img src="img/icon-del.png" alt=""></a>
+      </div>
+   </div>
+
+
+
+
+   <div class="pack-item itog">
+      <div class="info">
+         <p class='flex-sb'><b><i18n>global.summary</i18n>:</b> <span>Посылок: <b>{deliveries.length}</b></span></p>
+         <p><i18n>global.total_items</i18n>: <b>{totalItems()}</b></p>
+         <p><i18n>global.total_weight</i18n>: <b>{totalWeight()} кг</b></p>
+         <p><i18n>global.volume</i18n>: <b>{totalVolume()} м3</b></p>
+      </div>
+   </div>
+
+
+
+   <div class="btns bn">
+      <div class="l">
+<!--
+         <a class="cont" style="display:unset; padding:15px"><img src="img/barcode.png" alt=""> Печать шрих кода</a>
+-->
+         <a show={deliveries.length > 0} click={print} class="cont" style="display:unset; padding:15px"><img src="img/print.png" alt=""><i18n>global.print</i18n></a>
+      </div>
+      <div class="l">
+         <button show={deliveries.length > 0} click={uploadToServer} class='v1 small'><i18n>dashboard.new_delivery.form.button.export_to_server</i18n></button>
+         <a click={cancel} class='v1 small err'><img src="img/delicon.png" alt=""><i18n>global.delete</i18n></a>
+      </div>
+   </div>
+</form>
+
+
+
+
+<!--
+<div ng-if="actions.selectFrom.isVisible" class="modal w100" id='delete' ng-init="page=0; limit=20;">
+   <div class="modal-out">
+      <div class="modal-in" style="width:100%">
+         <a ng-click="actions.selectFrom.cancel()" class='close click'><img src="img/close.png" alt=""></a>
+         <h3>Выбрать отправителя:</h3>
+
+         <input ng-model="filter" style="width:100%" placeholder="Поиск...">
+         <br/>
+         <br/>
+
+         <table style="width:100%">
+            <tbody>
+               <tr ng-repeat="from in (listFrom = (cache.clients.from.list | filter: filter) | limitTo: limit : page*limit)"
+                  class="over click" ng-click="selectFrom(from); actions.selectFrom.cancel()">
+                  <td><a href="#info">from.id</a></td>
+                  <td><a href="#error">from.name</a></td>
+                  <td>from.company</td>
+                  <td>from.email</td>
+                  <td>from.phone</td>
+
+                  <td>cache.countries.id[from.country]</td>
+               </tr>
+            </tbody>
+         </table>
+
+
+         <pager length="listFrom.length" page="page" limit="limit"></pager>
+
+
+         <div class="flex">
+            <a ng-click="actions.selectFrom.cancel()"  class='cont' href="#">Отмена</a>
+         </div>
+      </div>
+   </div>
+</div>
+-->
+
+
+<!--
+<div ng-if="actions.selectTo.isVisible" class="modal w100" id='delete' ng-init="page=0; limit=20;">
+   <div class="modal-out">
+      <div class="modal-in" style="width:100%">
+         <a ng-click="actions.selectTo.cancel()" class='close click'><img src="img/close.png" alt=""></a>
+         <h3>Выбрать получателя:</h3>
+
+         <input ng-model="filter" style="width:100%" placeholder="Поиск...">
+         <br/>
+         <br/>
+
+         <table style="width:100%">
+            <tbody>
+               <tr ng-repeat="to in (listTo = (cache.clients.to.list | filter: filter) | limitTo: limit : page*limit)"
+                  class="over click" ng-click="selectTo(to); actions.selectTo.cancel()">
+                  <td><a href="#info">to.id</a></td>
+                  <td><a href="#error">to.name</a></td>
+                  <td>to.company</td>
+                  <td>to.email</td>
+                  <td>to.phone</td>
+
+                  <td>cache.countries.id[from.country]</td>
+               </tr>
+            </tbody>
+         </table>
+
+
+         <pager length="listTo.length" page="page" limit="limit"></pager>
+
+
+         <div class="flex">
+            <a ng-click="actions.selectTo.cancel()"  class='cont' href="#">Отмена</a>
+         </div>
+      </div>
+   </div>
+</div>
+-->
+
+
+
+
+this.deliveries = opts.model.cache.deliveries.list.filter((delivery)=>{return delivery.isDraft});
+
+
+
+
+
+
+this.totalItems = ()=>{
+   var iItems = 0;
+
+   this.deliveries.forEach((delivery) =>{
+      iItems += parseInt(delivery.items);
+   });
+
+   return iItems;
+}
+this.totalWeight = ()=>{
+   var fWeight = 0;
+
+   this.deliveries.forEach((delivery) =>{
+      fWeight += parseFloat(delivery.weight);
+   });
+
+   return fWeight.toFixed(3);
+}
+this.totalVolume = ()=>{
+   var iVolume = 0;
+
+   this.deliveries.forEach((delivery) =>{
+      iVolume += parseFloat(delivery.volume);
+   });
+
+   return iVolume.toFixed(3);
+}
+
+
+this.calcDimension =()=>{
+   var iVolumeCm = parseInt($("#height").val()) * parseInt($("#width").val()) * parseInt($("#length").val());
+   if (iVolumeCm < 1000) iVolumeCm = 1000;
+
+   $("#volume").val(iVolumeCm / 1000000);
+   this.roundVolume();
+}
+this.clearDimension =()=>{
+   $("#height").val("");
+   $("#width").val("");
+   $("#length").val("");
+}
+this.roundVolume = ()=>{
+   console.log("pizda");
+   $("#volume").val(parseFloat($("#volume").val()).toFixed(3));
+}
+
+
+
+
+
+
+
+
+this.from = {};
+this.from.zips = [];
+this.from.cityIDes = [];
+this.setFromFilter = ()=>{
+   var iCountryID = parseInt($("#from-country").val());
+   var sZip  = $("#from-zip").val();
+   var sCity = $("#from-city").val().toLowerCase();
+
+   if(sCity){
+      this.from.cityIDes = [];
+      opts.model.cache.cities.list.forEach((city)=>{if (city.countryId == iCountryID && city.name.toLowerCase().indexOf(sCity) > -1 && this.from.cityIDes.length < 11) this.from.cityIDes.push(city.id)});
+
+      console.log(this.from.cityIDes);
+
+
+      console.log(iCountryID + ":" + sZip);
+      this.from.zips = opts.model.cache.zips.list.filter((zip)=>{return zip.countryId == iCountryID && zip.number.indexOf(sZip) > -1 && this.from.cityIDes.includes(zip.cityId)}).splice(0, 10);
+   }
+   else{
+      this.from.zips = opts.model.cache.zips.list.filter((zip)=>{return zip.countryId == iCountryID && zip.number.indexOf(sZip) > -1}).splice(0, 10);
+   }
+}
+this.setFromFilterZip = ()=>{
+   $("#from-city").val("");
+   this.setFromFilter();
+}
+this.setFromFilterCity = ()=>{
+   $("#from-zip").val("");
+   this.setFromFilter();
+}
+this.selectFromZip = (zip)=>{
+   return (e)=>{
+      console.log("setFromZip() -> " + zip.id);
+
+
+      this.from.zip = zip;
+      $("#from-zip").val(zip.number);
+      $("#from-city").val(opts.model.cache.cities.id[zip.cityId].name);
+
+      this.from.zips = [];
+   };
+}
+
+
+this.to = {};
+this.to.zips = [];
+this.to.cityIDes = [];
+this.setToFilter = ()=>{
+   var iCountryID = parseInt($("#to-country").val());
+   var sZip  = $("#to-zip").val();
+   var sCity = $("#to-city").val().toLowerCase();
+
+
+   if(sCity){
+      this.to.cityIDes = [];
+      opts.model.cache.cities.list.forEach((city)=>{if (city.countryId == iCountryID && city.name.toLowerCase().indexOf(sCity) > -1 && this.to.cityIDes.length < 11) this.to.cityIDes.push(city.id)});
+
+      console.log(this.to.cityIDes);
+
+
+      console.log(iCountryID + ":" + sZip);
+      this.to.zips = opts.model.cache.zips.list.filter((zip)=>{return zip.countryId == iCountryID && zip.number.indexOf(sZip) > -1 && this.to.cityIDes.includes(zip.cityId)}).splice(0, 10);
+   }
+   else{
+      this.to.zips = opts.model.cache.zips.list.filter((zip)=>{return zip.countryId == iCountryID && zip.number.indexOf(sZip) > -1}).splice(0, 10);
+   }
+}
+this.setToFilterZip = ()=>{
+   $("#to-city").val("");
+   this.setToFilter();
+}
+this.setToFilterCity = ()=>{
+   $("#to-zip").val("");
+   this.setToFilter();
+}
+this.selectToZip = (zip)=>{
+   return (e)=>{
+      console.log("setToZip() -> " + zip.id);
+
+      this.to.zip = zip;
+      $("#to-zip").val(zip.number);
+      $("#to-city").val(opts.model.cache.cities.id[zip.cityId].name);
+
+      this.to.zips = [];
+   };
+}
+
+
+
+
+
+
+this.cancelDelivery = (number)=>{
+   return ()=>{
+      console.log("cancelDelivery() number=" + number);
+
+      opts.model.gate.command("/delivery/delete",
+         [opts.model.session, this.deliveries[number].id],
+         (response) => {
+            this.deliveries.splice(number,1)
+            riot.update();
+         }
+      );
+   };
+};
+
+
+
+this.cancel = (e)=>{
+   console.log("cancelDelivery()");
+
+
+   var iDeliveriesToGo = this.deliveries.length;
+
+   this.deliveries.forEach((delivery) => {
+      opts.model.gate.command("/delivery/delete",
+         [opts.model.session, delivery.id],
+         (response) => {
+            iDeliveriesToGo--;
+
+            if(iDeliveriesToGo == 0){
+               location.reload();
+            }
+         }
+      );
+   });
+
+
+
+   this.unmount(true);
+   riot.mount("slot_dashboard", "deliveries",   {model:opts.model});
+
+
+
+
+   e.preventDefault();
+};
+
+
+
+this.clearDelivery = ()=>{
+   console.log("clearDelivery()");
+
+   var list = document.getElementsByTagName("input");
+   for (var i = 0; i < list.length; i++) {
+      list[i].value="";
+   }
+   var list = document.getElementsByTagName("textarea");
+   for (var i = 0; i < list.length; i++) {
+      list[i].value="";
+   }
+
+
+   $("#from-name").val(opts.model.user.nameFirst + " " + opts.model.user.nameLast);
+   $("#from-email").val(opts.model.user.phone);
+   $("#from-phone").val(opts.model.user.login);
+}
+
+
+
+
+this.planDelivery = (e)=>{
+   console.log("addDelivery()");
+
+   var delivery = {};
+   delivery.from = {};
+   delivery.to = {};
+
+   delivery.from.zip     = this.from.zip.id;
+   delivery.from.address = $("#from-address").val();
+   delivery.from.name    = $("#from-name").val();
+   delivery.from.phone   = $("#from-phone").val();
+   delivery.to.zip       = this.to.zip.id;
+   delivery.to.address   = $("#to-address").val();
+   delivery.to.name      = $("#to-name").val();
+   delivery.to.phone     = $("#to-phone").val();
+
+   delivery.description  = $("#description").val();
+
+   delivery.items  = $("#items").val();
+   delivery.weight = $("#weight").val();
+   delivery.volume = $("#volume").val();
+
+
+   delivery.sumValue     = 100 * parseFloat($("#value").val());
+   delivery.sumInsurance = 100 * parseFloat($("#insurance").val());
+   delivery.kuaidi       = $("#kuaidi").val();
+
+
+   console.log(delivery);
+
+
+   opts.model.gate.command("/delivery/new",
+      [opts.model.session,
+       delivery.from.zip, delivery.from.address, delivery.from.name, delivery.from.phone,
+       delivery.to.zip,   delivery.to.address,   delivery.to.name, delivery.to.phone,
+       delivery.description, Math.floor(parseFloat($("#weight").val() * 1000)), delivery.volume * 1000000, delivery.items,
+       isNaN(delivery.sumValue) ? "-" : delivery.sumValue, isNaN(delivery.sumInsurance) ? "-" : delivery.sumInsurance,
+       !delivery.kuaidi ? "-" : delivery.kuaidi
+      ],
+      (response) => {
+         delivery.id = response.id;
+         this.deliveries.push(delivery);
+
+         this.clearDelivery();
+         riot.update();
+      }
+   );
+
+   e.preventDefault();
+};
+
+
+
+
+
+this.print = (e)=>{
+   console.log("print()");
+
+   var sIDes = "";
+
+   this.deliveries.forEach((delivery) => {
+      if(sIDes.length > 0){
+         sIDes += ",";
+      }
+      sIDes += delivery.id;
+   });
+
+   var win = window.open(opts.model.gate.url + "/delivery/print/" + opts.model.session + "/" + sIDes + "/" + opts.model.lang, '_blank');
+
+   e.preventDefault();
+}
+
+
+
+
+
+
+
+this.uploadToServer = (e)=>{
+   console.log("exportToServer()");
+
+   var iDeliveriesToGo = this.deliveries.length;
+
+   this.deliveries.forEach((delivery) => {
+      opts.model.gate.command("/delivery/send",
+         [opts.model.session, delivery.id],
+         (response) => {
+            iDeliveriesToGo--;
+
+            if(iDeliveriesToGo == 0){
+               location.reload();
+            }
+         }
+      );
+   });
+
+   e.preventDefault();
+}
+
+
+
+
+
+
+this.i18n = opts.model.i18n.getTranslation;
+this.on('mount', function(){
+   console.log("[DASHBOARD NEW DELIVERY]");
+   opts.model.i18n.localize();
+
+
+   tag("dashboard_current_page", this.i18n("dashboard.new_delivery.title"));
+
+
+   this.clearDelivery();
+
+   riot.update();
+})
+
+
+</new_delivery>

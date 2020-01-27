@@ -1,0 +1,432 @@
+<deliveries>
+
+<!--
+<div class="title">
+   <h1>Мои посылки</h1>
+   <a class='archive' href="">
+      <img src="img/archive-icon.png" alt="">
+      <span>Архив отправлений</span>
+   </a>
+</div>
+-->
+
+
+
+
+
+<a click={newDelivery} class="create v1" style="padding:5px 15px"><i18n>dashboard.deliveries.button.new_delivery</i18n></a>
+
+<form class="table" ng-init="page = 0; limit = 30">
+   <table>
+      <thead>
+         <tr>
+            <td rowspan='2' style='min-width: 70px;'>
+<!--
+               <a click={newDelivery} class="add-package" style="">+</a>
+-->
+            </td>
+            <td style='min-width: 77px;'>ID</td>
+            <td style='min-width: 109px;'><i18n>dashboard.deliveries.table.header.from</i18n></td>
+            <td style='min-width: 120px;'><i18n>dashboard.deliveries.table.header.to</i18n></td>
+            <td style=''>
+               <div class="flex"><span><i18n>dashboard.deliveries.table.header.countryTo</span> <a href=""><img src="img/sort.png" alt=""></a></div>
+            </td>
+            <td style='min-width: 113px;'>
+               <div class="flex"><span><i18n>dashboard.deliveries.table.header.track</i18n></span> <a href=""><img src="img/sort.png" alt=""></a></div>
+            </td>
+            <td style='min-width: 113px;'>
+               <div class="flex"><span><i18n>dashboard.deliveries.table.header.dateCreated</i18n></span> <a href=""><img src="img/sort.png" alt=""></a></div>
+            </td>
+
+            <td style='min-width: 103px;'>
+               <div class="flex"><span><i18n>dashboard.deliveries.table.header.items</i18n></span> <a href=""><img src="img/sort.png" alt=""></a></div>
+            </td>
+            <td style='min-width: 71px;'>
+               <div class="flex"><span><i18n>dashboard.deliveries.table.header.weight</i18n></span> <a href=""><img src="img/sort.png" alt=""></a></div>
+            </td>
+            <td style='min-width: 93px;'>
+               <div class="flex"><span><i18n>dashboard.deliveries.table.header.dimension</i18n></span> <a href=""><img src="img/sort.png" alt=""></a></div>
+            </td>
+            <td style='min-width: 122px;'>Статус</td>
+            <td style='min-width: 70px;'></td>
+            <td style='min-width: 70px;'></td>
+            <td></td>
+         </tr>
+         <tr>
+            <td><input type="text" id="filter-id"        change={filters} onkeyup={filters}></td>
+            <td><input type="text" id="filter-from-name" change={filters} onkeyup={filters}></td>
+            <td><input type="text" id="filter-to-name"   change={filters} onkeyup={filters}></td>
+            <td>
+               <select id="filter-to-country" change={filters} onkeyup={filters}>
+                  <option></option>
+                  <option each={country in opts.model.cache.countries.list} value={country.id}>{country.name}</option>
+               </select>
+            </td>
+            <td><input type="text" id="filter-barcode" change={filters} onkeyup={filters}></td>
+            <td><input type="date" id="filter-created" change={filters} onkeyup={filters}></td>
+            <td>
+               <select id="filter-items" change={filters} onkeyup={filters}>
+                  <option></option>
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                  <option value="6">6</option>
+                  <option value="7">7</option>
+                  <option value="8">8</option>
+                  <option value="9">9</option>
+               </select>
+            </td>
+            <td><input type="number" id="filter-weight"></td>
+            <td><input type="number" id="filter-volume"></td>
+            <td>
+               <select id="filter-status" change={filters} onkeyup={filters}>
+                  <option value=""></option>
+                  <option each={status in opts.model.cache.deliveryStatus.list} value={status.id}>{status.namePublic}</option>
+               </select>
+            </td>
+            <td></td>
+            <td></td>
+            <td></td>
+         </tr>
+      </thead>
+      <tbody>
+         <tr each={delivery in filtred} ng-style="delivery.isAddressOk ? {} : {'background-color':'red'}">
+            <td>
+               <label ng-click="delivery.isSelected = !delivery.isSelected; menu.isAllSelected = false; $event.stopPropagation()" ng-class="delivery.isSelected ? 'checked checkbox' : 'checkbox'" for="p2">
+                  <span class='checkbox__text'></span>
+               </label>
+            </td>
+            <td><a href="#info">{delivery.id}</a></td>
+
+<!--
+
+            <td><a href="#error">cache.clients.from.id[delivery.from].name</a></td>
+
+            <td ng-if="delivery.isAddressOk">cache.clients.to.id[delivery.to].name</td>
+            <td ng-if="!delivery.isAddressOk">-----</td>
+-->
+
+
+            <td>{delivery.from.name}</td>
+            <td>{delivery.to.name}</td>
+
+
+            <td>{this.parent.opts.model.cache.countries.id[this.parent.opts.model.cache.zips.id[delivery.to.zipId].countryId].code}</td>
+
+
+            <td>{delivery.barcode}</td>
+            <td>{formatDate(delivery.dateCreated)}</td>
+            <td>{delivery.items}</td>
+            <td>{delivery.weight} <i18n>global.kg</i18n></td>
+            <td>{delivery.volume} <i18n>global.m3</i18n></td>
+
+
+            <td class='bt'>
+               {this.parent.opts.model.cache.deliveryStatus.id[delivery.status].namePublic}
+            </td>
+
+
+            <td class='alert'>
+               <div class='changeStatus'>
+                  <span click={showHistory(delivery)} class='alert'><i18n>dashboard.deliveries.table.body.link.history</i18n></span></span>
+               </div>
+            </td>
+
+
+            <td class='bt'>
+               <a ng-click="actions.info(delivery)"><img src="img/icon-file.png" alt=""></a>
+            </td>
+            <td class='bt'>
+               <a href="#edit"><img src="img/icon-edit.png" alt=""></a>
+            </td>
+            <td class='bt'>
+               <a click={deleteDelivery(delivery)}><img src="img/icon-del.png" alt=""></a>
+            </td>
+         </tr>
+      </tbody>
+   </table>
+</form>
+
+
+
+
+
+
+<!--
+<div ng-if="columns.isVisible" class="modal w100" id='addlist'>
+   <div class="modal-out">
+      <div class="modal-in">
+         <a ng-click="columns.isVisible=false" class='close' href="#"><img src="img/close.png" alt=""></a>
+         <h3>Добавление/удаление столбцов</h3>
+         <form action="">
+            <div class="flex fw">
+               <label class='checkbox' for="a1">
+                  <input type="checkbox" name='p1' id='a1'>
+                  <span class='checkbox__text'>ID посылки</span>
+               </label>
+               <label class='checkbox' for="a2">
+                  <input type="checkbox" name='p1' id='a2'>
+                  <span class='checkbox__text'>Отправитель</span>
+               </label>
+               <label class='checkbox' for="a3">
+                  <input type="checkbox" name='p1' id='a3'>
+                  <span class='checkbox__text'>Трек-номер</span>
+               </label>
+               <label class='checkbox' for="a4">
+                  <input type="checkbox" name='p1' id='a4'>
+                  <span class='checkbox__text'>Наименование</span>
+               </label>
+               <label class='checkbox' for="a5">
+                  <input type="checkbox" name='p1' id='a5'>
+                  <span class='checkbox__text'>Ожидается на пересылке</span>
+               </label>
+               <label class='checkbox' for="a6">
+                  <input type="checkbox" name='p1' id='a6'>
+                  <span class='checkbox__text'>Заявленная стоимость</span>
+               </label>
+            </div>
+            <button ng-click="columns.isVisible=false" class='v1 center'>Сохранить</button>
+         </form>
+      </div>
+   </div>
+</div>
+-->
+
+
+<div show={actions.showDelete} class="modal w100" id='delete'>
+   <div class="modal-out">
+      <div class="modal-in">
+         <a click={actions.no} class='close'><img src="img/close.png" alt=""></a>
+         <h3><i18n>dashboard.deliveries.table.actions.dealog.delete.header</i18n></h3>
+         <p><i18n>dashboard.deliveries.table.actions.dealog.delete.text</i18n></p>
+         <div class="flex">
+            <a click={actions.yes} class='cont err'>Да, удалить</a>
+            <a click={actions.no}  class='cont'><i18n>global.no</i18n></a>
+         </div>
+      </div>
+   </div>
+</div>
+
+<!--
+<div ng-if="actions.info.isVisible" class="modal w100" id='info'>
+   <div class="modal-out">
+      <div class="modal-in">
+         <a ng-click="actions.close()" class='close'><img src="img/close.png" alt=""></a>
+         <h3>Отправление №actions.delivery.id</h3>
+         <div class="flex sb">
+            <div class="l">Отправитель</div>
+            <div class="r">cache.clients.id[actions.delivery.from].name()</div>
+         </div>
+         <div class="flex sb">
+            <div class="l">Получатель</div>
+            <div class="r">cache.clients.id[actions.delivery.to].name()</div>
+         </div>
+         <div class="flex sb">
+            <div class="l">Трек-номер</div>
+            <div class="r">actions.delivery.barcode</div>
+         </div>
+         <div class="line"></div>
+         <div class="flex sb">
+            <div class="l">Отправитель</div>
+            <div class="r">Петров Иван Викторович</div>
+         </div>
+         <div class="flex sb">
+            <div class="l">Получатель</div>
+            <div class="r">Семенов Александр Иванович</div>
+         </div>
+         <div class="flex sb">
+            <div class="l">Трек-номер</div>
+            <div class="r">actions.delivery.barcode</div>
+         </div>
+         <div class="line"></div>
+         <div class="flex fw sb">
+            <div class="l">Описание товара</div>
+            <div class="r">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem.</div>
+         </div>
+         <div class="line"></div>
+         <div class="flex sb">
+            <div class="l">Дата оплаты</div>
+            <div class="r">25.04.2018</div>
+         </div>
+         <div class="flex sb">
+            <div class="l">Дата отправки</div>
+            <div class="r">25.04.2018</div>
+         </div>
+         <div class="flex sb">
+            <div class="l">Дата получения</div>
+            <div class="r success">В пути</div>
+         </div>
+         <div class="line"></div>
+         <div class="flex fw comment sb">
+            <div class="l">Комментарии</div>
+            <div class="r">Отсутствуют</div>
+         </div>
+      </div>
+   </div>
+</div>
+-->
+
+
+
+
+
+<div show={actions.showHistory} class="modal w100" id='info'>
+   <div class="modal-out">
+      <div class="modal-in">
+         <a click={actions.no} class='close'><img src="img/close.png" alt=""></a>
+         <h3><i18n>dashboard.deliveries.table.actions.dealog.show_history.header</i18n></h3>
+
+         <div each={delivery in this.actions.listHistory} class="flex sb">
+            <div class="l">{formatDateTime(delivery.date)}</div>
+            <div class="r">{this.parent.opts.model.cache.deliveryStatus.id[delivery.status].name}</div>
+         </div>
+      </div>
+   </div>
+</div>
+
+
+
+this.filters = (e)=>{
+//   console.log("filters");
+
+   var sID          = $("#filter-id").val();
+   var sFromName    = $("#filter-from-name").val();
+   var sToName      = $("#filter-to-name").val();
+   var iCountryTo   = parseInt($("#filter-to-country").val());
+   var sDateCreated = $("#filter-created").val();
+   var sBarCode     = $("#filter-barcode").val();
+   var iItems       = parseInt($("#filter-items").val());
+   var iStatus      = parseInt($("#filter-status").val());
+
+
+
+   console.log("{filter} " + sFromName  + ":" + sToName + ":" + sDateCreated + ":" + iStatus);
+
+
+   this.filtred = opts.model.cache.deliveries.list.filter((delivery)=>{
+      //console.log(delivery);
+
+      var zipTo = opts.model.cache.zips.id[delivery.to.zipId];
+
+      if((!sID || delivery.id.toString().indexOf(sID) > -1)
+         && (!sFromName || delivery.from.name.toString().indexOf(sFromName) > -1)
+         && (!sToName || delivery.to.name.toString().indexOf(sToName) > -1)
+         && (!sBarCode || delivery.barcode.toString().indexOf(sBarCode) > -1)
+         && (!sDateCreated || delivery.createdString == sDateCreated)
+         && (isNaN(iItems)  || delivery.items == iItems)
+         && (isNaN(iStatus) || delivery.status == iStatus)
+         && (isNaN(iCountryTo) || zipTo.countryId == iCountryTo)
+         && !delivery.isDraft){
+         return true;
+      }
+   });
+
+   console.log("{filter} results=" + this.filtred.length);
+};
+
+
+//this.filtred = opts.model.cache.deliveries.list;
+
+
+
+this.actions = {};
+
+this.newDelivery = function(e){
+   console.log("go -> newDelivery");
+
+   this.unmount(true);
+   riot.mount("slot_dashboard", "new_delivery",   {model:opts.model});
+
+   e.preventDefault();
+};
+
+
+
+
+
+
+
+this.showHistory = (delivery) => {
+   return function(e){
+      console.log("showHistory() id=" + delivery.id);
+      opts.model.setLoading(true);
+
+
+      this.actions.showHistory = true;
+      this.actions.id = delivery.id;
+
+
+      this.actions.no = function(){
+         delete this.actions.showHistory;
+      };
+
+      tag("delivery_status_history_id", delivery.id);
+
+
+      opts.model.gate.command("/delivery/history",
+         [opts.model.session, delivery.id],
+         (response) => {
+            this.actions.listHistory = response.history;
+            opts.model.setLoading(false);
+            riot.update();
+         },
+         true
+      );
+
+
+      e.preventDefault();
+   };
+}
+
+
+
+this.deleteDelivery = function(delivery){
+   return function(e){
+      this.actions.showDelete = true;
+      this.actions.id = delivery.id;
+
+
+      this.actions.yes = function(){
+         console.log("deleteDelivery() id=" + delivery.id);
+
+         opts.model.gate.command("/delivery/list",
+            [opts.model.session, delivery.id],
+            (response) => {
+            }
+         );
+      };
+
+
+      this.actions.no = function(){
+         delete this.actions.showDelete;
+      };
+
+      tag("delivery_to_delete", delivery.id);
+
+      e.preventDefault();
+   };
+}
+
+
+this.filters();
+
+
+this.i18n = opts.model.i18n.getTranslation;
+this.on('mount', ()=>{
+   console.log("[DASHBOARD DELIVERIES]");
+   opts.model.i18n.localize();
+
+   tag("dashboard_current_page", this.i18n("dashboard.deliveries.title"));
+
+   riot.update();
+})
+
+
+this.on('update', ()=>{
+   console.log("update");
+})
+
+
+</deliveries>

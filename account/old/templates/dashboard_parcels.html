@@ -1,0 +1,265 @@
+<div class="title">
+   <h1>Мои посылки</h1>
+   <a class='archive' href="">
+      <img src="img/archive-icon.png" alt="">
+      <span>Архив отправлений</span>
+   </a>
+</div>
+<div class="sort">
+   <form action="sort.php" method="post">
+      <label ng-click="menu.selectAll()" ng-class="menu.isAllSelected ? 'checked checkbox' : 'checkbox'" for="selectAll">
+         <span class='checkbox__text'>Выбрать все</span>
+      </label>
+      <select name="doings" id="doings">
+         <option>Действия</option>
+         <option value="1">Действие 1</option>
+         <option value="2">Действие 2</option>
+         <option value="3">Действие 4</option>
+         <option value="4">Действие 4</option>
+      </select>
+      <button class='cont'>Продолжить</button>
+   </form>
+   <a ng-click="newDelivery()" class='create v1'>Создать посылку</a>
+</div>
+
+<form class="table" ng-init="page = 0; limit = 30">
+   <table>
+      <thead>
+         <tr>
+            <td style='min-width: 60px;'></td>
+            <td style='min-width: 77px;'>ID</td>
+            <td style='min-width: 109px;'>Отправитель</td>
+            <td style='min-width: 120px;'>Получатель</td>
+            <td style='min-width: 113px;'>
+               <div class="flex"><span>Страна<br>получателя</span> <a href=""><img src="img/sort.png" alt=""></a></div>
+            </td>
+            <td style='min-width: 113px;'>
+               <div class="flex"><span>Трек-номер</span> <a href=""><img src="img/sort.png" alt=""></a></div>
+            </td>
+            <td style='min-width: 113px;'>
+               <div class="flex"><span>Дата создания</span> <a href=""><img src="img/sort.png" alt=""></a></div>
+            </td>
+            <td style='min-width: 103px;'>
+               <div class="flex"><span>Кол-во мест</span> <a href=""><img src="img/sort.png" alt=""></a></div>
+            </td>
+            <td style='min-width: 71px;'>
+               <div class="flex"><span>Вес</span> <a href=""><img src="img/sort.png" alt=""></a></div>
+            </td>
+            <td style='min-width: 93px;'>
+               <div class="flex"><span>Объем</span> <a href=""><img src="img/sort.png" alt=""></a></div>
+            </td>
+            <td style='min-width: 122px;'>Статус</td>
+            <td style='min-width: 70px;'></td>
+            <td style='min-width: 70px;'></td>
+            <td rowspan='2' style='min-width: 70px;'>
+               <a ng-click="columns.isVisible=true" class='add-package'>+</a>
+            </td>
+         </tr>
+         <tr>
+            <td></td>
+            <td><input type="text" ng-model="filters.id"       name='pack-id'></td>
+            <td><input type="text" ng-model="filters.nameFrom" name='pack-from'></td>
+            <td><input type="text" ng-model="filters.nameTo"   name='pack-to'></td>
+            <td>
+               <select ng-model="filters.country" name="pack-country">
+                  <option></option>
+                  <option ng-repeat="country in cache.countries.list" ng-value="{{country.id}}">{{country.code}}</option>
+               </select>
+            </td>
+            <td><input type="text" ng-model="filters.barcode" name='pack-track'></td>
+            <td><input type="date" name='pack-date'></td>
+            <td>
+               <select name="pack-place">
+                  <option></option>
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+               </select>
+            </td>
+            <td><input type="text" ng-model="filters.weight" name='pack-weight'></td>
+            <td><input type="text" ng-model="filters.volume" name='pack-v'></td>
+            <td>
+               <select name="pack-place">
+                  <option ng-model="filters.status" ng-value="status.id" ng-repeat="status in cache.deliveries.status.list">{{status.name}}</option>
+               </select>
+            </td>
+            <td></td>
+            <td></td>
+         </tr>
+      </thead>
+      <tbody>
+         <tr ng-repeat="delivery in (listDeliveries = (cache.deliveries.list | filter:{id: filters.id}
+                                                          | filter:{index :      {nameFrom:  filters.nameFrom}}
+                                                          | filter:{index :      {nameTo:    filters.nameTo}}
+                                                          | filter:{index :      {countryTo: filters.country}}
+                                                          | filter:{index :      {status:    filters.status}}
+                                                          | filter:{barcode:     filters.barcode}
+                                                          | filter:{weight:      filters.weight}
+                                                          | filter:{volume:      filters.volume}) | limitTo: limit : page)"
+             ng-style="delivery.isAddressOk ? {} : {'background-color':'red'}">
+            <td>
+               <label ng-click="delivery.isSelected = !delivery.isSelected; menu.isAllSelected = false; $event.stopPropagation()" ng-class="delivery.isSelected ? 'checked checkbox' : 'checkbox'" for="p2">
+                  <span class='checkbox__text'></span>
+               </label>
+            </td>
+            <td><a href="#info">{{delivery.id}}</a></td>
+            <td><a href="#error">{{cache.clients.from.id[delivery.from].name}}</a></td>
+
+            <td ng-if="delivery.isAddressOk">{{cache.clients.to.id[delivery.to].name}}</td>
+            <td ng-if="!delivery.isAddressOk">-----</td>
+
+            <td>{{cache.countries.id[cache.clients.to.id[delivery.to].country].code}}</td>
+            <td>{{delivery.barcode}}</td>
+            <td>12.05.2018</td>
+            <td>{{delivery.places}}</td>
+            <td>{{delivery.weight}} кг</td>
+            <td>{{delivery.volume}} м2</td>
+            <td class='alert'>
+               <div class='changeStatus'>
+                  <span class='alert'>{{cache.deliveries.status.id[delivery.status].name}}</span>
+                  <div class="openStatisList">
+                     <a href="" class='' ng-repeat="status in cache.deliveries.status.list">{{status.name}}</a>
+
+<!--
+                     <a href="" class='alert active'>Формируется</a>
+                     <a href="" class='primory'>Отправлена</a>
+                     <a href="" class='def'>В пункте пересылки</a>
+                     <a href="" class='success'>Доставленна</a>
+                     <a href="" class='def'>Передано на доставку</a>
+                     <a href="" class='error'>Отменена</a>
+-->
+                  </div>
+               </div>
+            </td>
+            <td class='bt'>
+               <a ng-click="actions.info(delivery)"><img src="img/icon-file.png" alt=""></a>
+            </td>
+            <td class='bt'>
+               <a href="#edit"><img src="img/icon-edit.png" alt=""></a>
+            </td>
+            <td class='bt'>
+               <a ng-click="actions.delete(delivery); $event.stopPropagation()"><img src="img/icon-del.png" alt=""></a>
+            </td>
+         </tr>
+      </tbody>
+   </table>
+</form>
+
+
+
+
+<pager length="listDeliveries.length" page="page" limit="limit"></pager>
+
+
+
+<div ng-if="columns.isVisible" class="modal w100" id='addlist'>
+   <div class="modal-out">
+      <div class="modal-in">
+         <a ng-click="columns.isVisible=false" class='close' href="#"><img src="img/close.png" alt=""></a>
+         <h3>Добавление/удаление столбцов</h3>
+         <form action="">
+            <div class="flex fw">
+               <label class='checkbox' for="a1">
+                  <input type="checkbox" name='p1' id='a1'>
+                  <span class='checkbox__text'>ID посылки</span>
+               </label>
+               <label class='checkbox' for="a2">
+                  <input type="checkbox" name='p1' id='a2'>
+                  <span class='checkbox__text'>Отправитель</span>
+               </label>
+               <label class='checkbox' for="a3">
+                  <input type="checkbox" name='p1' id='a3'>
+                  <span class='checkbox__text'>Трек-номер</span>
+               </label>
+               <label class='checkbox' for="a4">
+                  <input type="checkbox" name='p1' id='a4'>
+                  <span class='checkbox__text'>Наименование</span>
+               </label>
+               <label class='checkbox' for="a5">
+                  <input type="checkbox" name='p1' id='a5'>
+                  <span class='checkbox__text'>Ожидается на пересылке</span>
+               </label>
+               <label class='checkbox' for="a6">
+                  <input type="checkbox" name='p1' id='a6'>
+                  <span class='checkbox__text'>Заявленная стоимость</span>
+               </label>
+            </div>
+            <button ng-click="columns.isVisible=false" class='v1 center'>Сохранить</button>
+         </form>
+      </div>
+   </div>
+</div>
+
+
+
+<div ng-if="actions.delete.isVisible" class="modal w100" id='delete'>
+   <div class="modal-out">
+      <div class="modal-in">
+         <a ng-click="actions.no()" class='close'><img src="img/close.png" alt=""></a>
+         <h3>Удалить посылку?</h3>
+         <p>Вы уверены, что хотите безвозвратно<br>удалить посылку {{actions.id}}?</p>
+         <div class="flex">
+            <a ng-click="actions.yes()" class='cont err' href="">Да, удалить</a>
+            <a ng-click="actions.no()"  class='cont' href="#">Нет</a>
+         </div>
+      </div>
+   </div>
+</div>
+
+
+
+<div ng-if="actions.info.isVisible" class="modal w100" id='info'>
+   <div class="modal-out">
+      <div class="modal-in">
+         <a ng-click="actions.close()" class='close'><img src="img/close.png" alt=""></a>
+         <h3>Отправление №{{actions.delivery.id}}</h3>
+         <div class="flex sb">
+            <div class="l">Отправитель</div>
+            <div class="r">{{cache.clients.id[actions.delivery.from].name()}}</div>
+         </div>
+         <div class="flex sb">
+            <div class="l">Получатель</div>
+            <div class="r">{{cache.clients.id[actions.delivery.to].name()}}</div>
+         </div>
+         <div class="flex sb">
+            <div class="l">Трек-номер</div>
+            <div class="r">{{actions.delivery.barcode}}</div>
+         </div>
+         <div class="line"></div>
+         <div class="flex sb">
+            <div class="l">Отправитель</div>
+            <div class="r">Петров Иван Викторович</div>
+         </div>
+         <div class="flex sb">
+            <div class="l">Получатель</div>
+            <div class="r">Семенов Александр Иванович</div>
+         </div>
+         <div class="flex sb">
+            <div class="l">Трек-номер</div>
+            <div class="r">{{actions.delivery.barcode}}</div>
+         </div>
+         <div class="line"></div>
+         <div class="flex fw sb">
+            <div class="l">Описание товара</div>
+            <div class="r">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem.</div>
+         </div>
+         <div class="line"></div>
+         <div class="flex sb">
+            <div class="l">Дата оплаты</div>
+            <div class="r">25.04.2018</div>
+         </div>
+         <div class="flex sb">
+            <div class="l">Дата отправки</div>
+            <div class="r">25.04.2018</div>
+         </div>
+         <div class="flex sb">
+            <div class="l">Дата получения</div>
+            <div class="r success">В пути</div>
+         </div>
+         <div class="line"></div>
+         <div class="flex fw comment sb">
+            <div class="l">Комментарии</div>
+            <div class="r">Отсутствуют</div>
+         </div>
+      </div>
+   </div>
+</div>

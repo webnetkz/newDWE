@@ -1,0 +1,76 @@
+<div class="title">
+   <h1>Создание отправления</h1>
+</div>
+<form class="create_form">
+   <div class="flex_form">
+      <div class="left">
+         <h2>Отправитель</h2>
+         <label class='checkbox' for="r">
+            <input type="checkbox" name='p1' id='r'>
+            <span class='checkbox__text'>Юридическое лицо</span>
+         </label>
+         <input type="text" name='name' placeholder="Наименование компании *" required>
+         <input type="text" name='name' placeholder="Фамилия *" required>
+         <input type="text" name='name' placeholder="Имя *" required>
+         <input type="text" name='name' placeholder="Номер телефона *" required>
+         <input type="text" name='name' placeholder="E-mail *" required>
+         <a class='cont' href="">Выбрать контрагента</a>
+         <h4>Откуда</h4>
+         <select name="" id="">
+            <option value="">Страна</option>
+            <option value="">Страна 1</option>
+            <option value="">Страна 2</option>
+         </select>
+         <select name="" id="">
+            <option value="">Город</option>
+            <option value="">Город 1</option>
+            <option value="">Город 2</option>
+         </select>
+         <input type="text" name='name' placeholder="Индекс">
+         <input type="text" name='name' placeholder="Улица *" required>
+         <div class="fl">
+            <input type="text" name='name' placeholder="Дом *" required>
+            <input type="text" name='name' placeholder="Корпус">
+            <input type="text" name='name' placeholder="кв/оф *" required>
+         </div>
+         <input type="text" name='name' placeholder="Другое">
+      </div>
+      <img class='mid' src="img/big-arrow-right.png" alt="">
+      <div class="right">
+         <h2>Получатель</h2>
+         <label class='checkbox' for="r1">
+            <input type="checkbox" name='p1' id='r1'>
+            <span class='checkbox__text'>Юридическое лицо</span>
+         </label>
+         <input type="text" name='name' placeholder="Наименование компании *" required>
+         <input type="text" name='name' placeholder="Фамилия *" required>
+         <input type="text" name='name' placeholder="Имя *" required>
+         <input type="text" name='name' placeholder="Номер телефона *" required>
+         <input type="text" name='name' placeholder="E-mail *" required>
+         <a class='cont' href="">Выбрать контрагента</a>
+         <h4>Куда</h4>
+         <select name="" id="">
+            <option value="">Страна</option>
+            <option value="">Страна 1</option>
+            <option value="">Страна 2</option>
+         </select>
+         <select name="" id="">
+            <option value="">Город</option>
+            <option value="">Город 1</option>
+            <option value="">Город 2</option>
+         </select>
+         <input type="text" name='name' placeholder="Индекс">
+         <input type="text" name='name' placeholder="Улица *" required>
+         <div class="fl">
+            <input type="text" name='name' placeholder="Дом *" required>
+            <input type="text" name='name' placeholder="Корпус">
+            <input type="text" name='name' placeholder="кв/оф *" required>
+         </div>
+         <input type="text" name='name' placeholder="Другое">
+      </div>
+   </div>
+   <div class="btns">
+      <a ng-click="nav('dashboard','parcels')" class='v1 small err'>Назад</a>
+      <button ng-click="nav('dashboard','new_parcel2')" class='v1 small'>Далее</button>
+   </div>
+</form>

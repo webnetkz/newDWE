@@ -1,0 +1,195 @@
+<registration>
+<div class="login w100">
+   <div class="w100 login-header">
+      <div class="container">
+         <div class="logo">
+            <img src="img/logo.png" alt="">
+            <div class="line"></div>
+            <h1><i18n>login.top.message</i18n></h1>
+         </div>
+<!--
+         <a class='phone' href="tel:{i18n('login.top.phone')}">
+            <img src="img/phone-icon.png" alt="">
+            <span><i18n>login.top.phone</i18n></span>
+         </a>
+-->
+      </div>
+   </div>
+   <div class="login-content w100">
+      <div class="login-form">
+         <h2><i18n>registration.form.title</i18n></h2>
+         <form id="login-form" submit={userRegistration}>
+            <input type="text"     id="email"    name='email'    required placeholder="{i18n('registration.form.field.email')}">
+            <div id="email-message"></div>
+            <input type="text"     id="name"     name='name'     required placeholder="{i18n('registration.form.field.name')}">
+            <div></div>
+            <input type="text"     id="phone"    name='phone'    required placeholder="{i18n('registration.form.field.phone')}">
+            <div></div>
+            <input type="password" id="password" name='password' required placeholder="{i18n('registration.form.field.password')}">
+            <div id="password-message1">{password_message1}</div>
+            <input type="password" id="password2" name='password2' required placeholder="{i18n('registration.form.field.password2')}">
+            <div id="password-message2">{password_message2}</div>
+            <button class='v1'><i18n>registration.form.submit.button</i18n></button>
+         </form>
+         <a click={cancel} class="clickable" style="position:absolute; bottom:5px; width:80%; text-align:center; color:red"><i18n>registration.form.link.cancel</i18n></a>
+      </div>
+   </div>
+   <div class="login-footer w100">
+      <div class="container">
+         <p><i18n>login.bottom.message</i18n></p>
+      </div>
+   </div>
+</div>
+
+
+this.cancel = function(){
+   console.log("cancel()");
+
+   this.unmount(true);
+   riot.mount("root_slot", "login", {model:opts.model});
+}
+
+
+this.i18n = opts.model.i18n.getTranslation;
+this.on('mount', function(){
+   console.log("[REGISTRATION]");
+   opts.model.i18n.localize();
+
+   riot.update();
+})
+
+
+this.userRegistration = function(e){
+   console.log("userRegistration()");
+
+   if($("#password").val() != $("#password2").val()){
+      $("#password2").addClass("error");
+      $("#password2").select();
+      $("#password-message2").addClass("error");
+      $("#password-message2").html(this.i18n("registration.form.errors.passwords_are_different"));
+      e.preventDefault();
+      return;
+   }
+
+   var arrstrName = $("#name").val().split(" ");
+
+   opts.model.gate.command("/user/new",
+      [$("#email").val(), $("#password").val(), opts.model.lang, 0, arrstrName[0], arrstrName[1], $("#phone").val()],
+      (response)=>{
+         switch(response.operationCode){
+            case 1004:{
+               console.log("userr already exists");
+
+               $("#email").addClass("error");
+               $("#email").select();
+               $("#email-message").addClass("error");
+               $("#email-message").html(this.i18n("registration.form.errors.user_exists"));
+
+               break;
+            }
+            case 1003:{
+               console.log("wrong password");
+
+               $("#email").removeClass();
+//               $("#email").addClass("ok");
+               $("#email-message").removeClass();
+//               $("#email-message").addClass("ok");
+               $("#email-message").html("");
+
+
+
+               $("#password").addClass("error");
+               $("#password").select();
+               $("#password-message").addClass("error");
+               $("#password-message").html(this.i18n("login.form.errors.wrong_password"));
+               break;
+            }
+            case 0:{
+               console.log("login ok, let's boot into dashboard.");
+
+               $("#email").removeClass();
+               $("#email-message").removeClass();
+               $("#password").removeClass();
+               $("#password-message").removeClass();
+               $("#email-message").html("");
+               $("#password-message").html("");
+
+
+               setCookie("SID", response.SID);
+               location.reload();
+
+
+               //this.unmount(true);
+               //riot.mount("root_slot", "dashboard",   {model:opts.model});
+
+               break;
+            }
+         }
+      }
+   );
+   e.preventDefault();
+};
+
+
+
+
+/*
+         $scope.server.request("/user/login",
+                               [$scope.form.login, $scope.form.password, new Date().getTimezoneOffset()],
+                               function(response){
+                                  $scope.form.errorCode = response.operationCode;
+                                  console.log(response.operationCode);
+
+                                  if(response.operationCode == 0){
+                                     $cookies.put("SID",  response.SID, {'expires': $scope.dateLongCookie});
+                                     $scope.profile.SID = response.SID;
+
+
+                                     $scope.server.request("/user/profile",
+                                                           [$cookies.get("SID")],
+                                                           function(response){
+                                                              if(response.operationCode == 0){
+                                                                 console.log("SID: valid");
+                                                                 $scope.profile.nameFirst = response.nameFirst;
+                                                                 $scope.profile.nameLast  = response.nameLast;
+                                                                 $scope.profile.isAdmin   = response.isAdmin;
+
+                                                                 $scope.nav("dashboard", "parcels");
+                                                              }
+                                                              else{
+                                                                 $scope.nav("login");
+                                                              }
+                                                           });
+
+
+
+
+                                     if($cookies.get("page") == null || $cookies.get("page")[0] == "login"){
+                                        $scope.nav("dashboard", "parcels");
+                                     }
+                                     else{
+                                        $scope.nav($cookies.get("page"));
+                                     }
+
+                                  }
+                                  else{
+                                     delete $scope.server.loading;
+                                  }
+                               });
+      }
+
+      e.preventDefault();
+   };
+
+
+*/
+
+
+
+
+
+
+
+</registration>
+
+

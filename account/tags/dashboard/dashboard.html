@@ -1,0 +1,446 @@
+<dashboard>
+<div class="content w100">
+	<div id="dashboard_left_menu" class="nav">
+		<div class="logo">
+			<img src="img/logo.png" alt="DWExpress">
+		</div>
+		<div class="user">
+			<div class="photo">
+				<img src="img/no-photo.png" alt="">
+				<div class="status"></div>
+			</div>
+			<div class="name">
+				<h3>{opts.model.user.nameFirst} {opts.model.user.nameLast}</h3>
+				<p if={opts.model.user.isAdmin}><i18n>global.role.admin</i18n></p>
+				<p if={!opts.model.user.isAdmin}><i18n>global.role.client</i18n></p>
+			</div>
+		</div>
+		<div class="menu">
+			<a ng-click="nav('dashboard','parcels')"	  ng-class="nav.page[1] == 'parcels' ? 'active' : 'click'">
+				<div class="icon">
+					<img src="img/pack-icon.png" alt="">
+				</div>
+				<span><i18n>dashboard.menu.link.deliveries</i18n></span>
+			</a>
+<!--
+			<a ng-click="nav('dashboard','shipments')"  ng-class="nav.page[1] == 'shipments' ? 'active' : 'click'">
+				<div class="icon">
+					<img src="img/part-icon.png" alt="">
+				</div>
+				<span>Партии</span>
+			</a>
+			<a href="">
+				<div class="icon">
+					<img src="img/fin-icon.png" alt="">
+				</div>
+				<span>Финансы</span>
+			</a>
+			<a href="">
+				<div class="icon">
+					<img src="img/list-icon.png" alt="">
+				</div>
+				<span>Списки</span>
+			</a>
+			<a href="">
+				<div class="icon">
+					<img src="img/rep-icon.png" alt="">
+				</div>
+				<span>Отчеты</span>
+			</a>
+			<a href="" class='mobile'>
+				<div class="icon">
+					<img src="img/close.png" alt="">
+				</div>
+				<span>Закрыть меню</span>
+			</a>
+-->
+		</div>
+	</div>
+	<div class="main">
+		<div class="main-header">
+			<div class="left">
+				<a click={toggleLeftMenu} class='toggle-nav' style="cursor:pointer">
+					<img src="img/burger.png" alt="">
+				</a>
+				<h2 style="margin-left:30px"><dashboard_current_page></dashboard_current_page></h2>
+<!--
+				<form class='search-form' action="search.php" method="post">
+					<label>
+						<input type="text" name='search' class='search-input' placeholder="Поиск">
+					</label>
+					<button><img src="img/icon-search.png" alt=""></button>
+				</form>
+-->
+			</div>
+			<div class="right">
+				<div class="langs">
+					<div class="choose-lang l">
+						<img src="img/{opts.model.lang.toLowerCase()}.png" alt="">
+						<p>{opts.model.lang}</p>
+						<img src="img/small-arrow-down.png" class='arrow' alt="">
+					</div>
+					<div class="lang-list">
+						<a click={switchLang(lang)} each={lang in opts.model.langs} class="l">
+							<img src="img/{lang.toLowerCase()}.png" alt="">
+							<p>{lang}</p>
+						</a>
+					</div>
+				</div>
+				<a click={logout} class="oi open-profile"></a>
+				<a class="oi open-conf"></a>
+			</div>
+		</div>
+		<div class="main-body">
+			<slot_dashboard></slot_dashboard>
+<!--
+			<div ng-if="nav.page[1] == 'parcels'"		  ng-include="'templates/dashboard_parcels.html'"			ng-controller="listParcels"	style="width:100%;height:100%"></div>
+			<div ng-if="nav.page[1] == 'new_parcel'"	  ng-include="'templates/dashboard_new_parcel.html'"		ng-controller="newParcel"		style="width:100%;height:100%"></div>
+			<div ng-if="nav.page[1] == 'new_parcel2'"   ng-include="'templates/dashboard_new_parcel2.html'" 	ng-controller="newParcel"		style="width:100%;height:100%"></div>
+			<div ng-if="nav.page[1] == 'new_parcel3'"   ng-include="'templates/dashboard_new_parcel3.html'" 	ng-controller="newParcel"		style="width:100%;height:100%"></div>
+			<div ng-if="nav.page[1] == 'shipments'"	  ng-include="'templates/dashboard_shipments.html'"		ng-controller="listShipments" style="width:100%;height:100%"></div>
+			<div ng-if="nav.page[1] == 'shipment_edit'" ng-include="'templates/dashboard_shipment_edit.html'"	ng-controller="shipmentEdit"	style="width:100%;height:100%"></div>
+-->
+		</div>
+	</div>
+</div>
+
+<!--
+<div class="modal w100" id='edit'>
+	<div class="modal-out">
+		<div class="modal-in">
+			<a class='close' href="#"><img src="img/close.png" alt=""></a>
+			<h3>Отправление №521312312</h3>
+			<form action="">
+				<div class="flex fw ai">
+					<div class="left">
+						<h4>Отправитель</h4>
+						<input type="text" name='name' placeholder="Наименование компании *" required>
+						<input type="text" name='name' placeholder="Фамилия *" required>
+						<input type="text" name='name' placeholder="Имя *" required>
+						<input type="text" name='name' placeholder="Номер телефона *" required>
+						<input type="text" name='name' placeholder="E-mail *" required>
+						<label class='checkbox' for="r">
+							<input type="checkbox" name='p1' id='r'>
+							<span class='checkbox__text'>Юридическое лицо</span>
+						</label>
+						<a class='cont' href="">Выбрать контрагента</a>
+					</div>
+					<div class="right">
+						<h4>Получатель</h4>
+						<input type="text" name='name' placeholder="Фамилия *" required>
+						<input type="text" name='name' placeholder="Имя *" required>
+						<input type="text" name='name' placeholder="Номер телефона *" required>
+						<input type="text" name='name' placeholder="E-mail *" required>
+						<label class='checkbox' for="r2">
+							<input type="checkbox" name='p1' id='r2'>
+							<span class='checkbox__text'>Юридическое лицо</span>
+						</label>
+						<a class='cont' href="">Выбрать получателя</a>
+					</div>
+				</div>
+				<div class="flex fw ai">
+					<div class="left">
+						<h4>Откуда</h4>
+						<select name="" id="">
+							<option value="">Страна</option>
+							<option value="">Страна 1</option>
+							<option value="">Страна 2</option>
+						</select>
+						<select name="" id="">
+							<option value="">Город</option>
+							<option value="">Город 1</option>
+							<option value="">Город 2</option>
+						</select>
+						<input type="text" name='name' placeholder="Индекс">
+						<input type="text" name='name' placeholder="Адрес *" required>
+					</div>
+					<div class="right">
+						<h4>Куда</h4>
+						<select name="" id="">
+							<option value="">Страна</option>
+							<option value="">Страна 1</option>
+							<option value="">Страна 2</option>
+						</select>
+						<select name="" id="">
+							<option value="">Город</option>
+							<option value="">Город 1</option>
+							<option value="">Город 2</option>
+						</select>
+						<input type="text" name='name' placeholder="Индекс">
+						<input type="text" name='name' placeholder="Адрес *" required>
+					</div>
+				</div>
+				<div class="bot">
+					<h4>Посылка</h4>
+					<input type="text" name='name' placeholder="Кол-во мест">
+					<input type="text" name='name' placeholder="Вес">
+					<input type="text" name='name' placeholder="Объем">
+					<input type="text" name='name' placeholder="Набор товаров">
+				</div>
+				<button class='v1 small'>Сохранить</button>
+			</form>
+		</div>
+	</div>
+</div>
+-->
+
+this.showLeftMenu = function(){
+	var domLeftMenu = $("#dashboard_left_menu");
+	domLeftMenu.animate({
+		opacity: 1,
+		width: "415px"
+	},
+	250,
+	function() {
+	 // Animation complete.
+	});
+};
+
+
+this.hideLeftMenu = function(){
+	var domLeftMenu = $("#dashboard_left_menu");
+	domLeftMenu.animate({
+		opacity: 0,
+		width: "0px"
+	},
+	250,
+	function() {
+	 // Animation complete.
+	});
+}
+
+
+this.toggleLeftMenu = function(){
+	console.log("toggleLeftMenu()");
+
+	var domLeftMenu = $("#dashboard_left_menu");
+	if(domLeftMenu.width() == 0){
+		this.showLeftMenu();
+	}
+	else{
+		this.hideLeftMenu();
+	}
+}
+
+
+this.i18n = opts.model.i18n.getTranslation;
+
+
+
+
+opts.model.cache = {};
+opts.model.cache.countries = {};
+opts.model.cache.countries.id = {};
+opts.model.cache.countries.list = [];
+this.getCountries = function(){
+	opts.model.gate.command("/address/country/list",
+		[opts.model.lang],
+		(response) => {
+			opts.model.cache.countries.list = arr(response.country);
+			console.log("[CACHE] Countries=" + opts.model.cache.countries.list.length);
+			//console.log(opts.model.cache.countries.list);
+
+			opts.model.cache.countries.list.forEach(function(country){
+				opts.model.cache.countries.id[country.id] = country;
+			});
+
+			this.blockLoaded();
+		}
+	);
+}
+
+
+
+opts.model.cache.zips = {};
+opts.model.cache.zips.id = {};
+opts.model.cache.zips.list = [];
+this.getZips = function(){
+	opts.model.gate.command("/address/zip/list",
+		[opts.model.lang],
+		(response) => {
+			opts.model.cache.zips.list = arr(response.zip);
+			console.log("[CACHE] Zips=" + opts.model.cache.zips.list.length);
+
+			opts.model.cache.zips.list.forEach(function(zip){
+				opts.model.cache.zips.id[zip.id] = zip;
+			});
+
+			this.blockLoaded();
+		}
+	);
+}
+
+
+
+
+opts.model.cache.regions = {};
+opts.model.cache.regions.id = {};
+opts.model.cache.regions.list = [];
+this.getRegions = function(){
+	opts.model.gate.command("/address/region/list",
+		[opts.model.lang],
+		(response) => {
+			opts.model.cache.regions.list = arr(response.regions.region);
+			console.log("[CACHE] Regions=" + opts.model.cache.regions.list.length);
+
+			opts.model.cache.regions.list.forEach(function(region){
+				opts.model.cache.regions.id[region.id] = region;
+			});
+
+			this.blockLoaded();
+		}
+	);
+}
+
+
+
+
+
+opts.model.cache.regionTypes = {};
+opts.model.cache.regionTypes.id = {};
+opts.model.cache.regionTypes.list = [];
+this.getRegionTypes = function(){
+	opts.model.gate.command("/address/region/type/list",
+		[opts.model.lang],
+		(response) => {
+			opts.model.cache.regionTypes.list = arr(response.type);
+			console.log("[CACHE] RegionTypes=" + opts.model.cache.regionTypes.list.length);
+
+			opts.model.cache.regionTypes.list.forEach(function(regionType){
+				opts.model.cache.regionTypes.id[regionType.id] = regionType;
+			});
+
+			this.blockLoaded();
+		}
+	);
+}
+
+
+
+
+
+opts.model.cache.cities = {};
+opts.model.cache.cities.id = {};
+opts.model.cache.cities.list = [];
+this.getCities = function(){
+	opts.model.gate.command("/address/city/list",
+		[opts.model.lang],
+		(response) => {
+			opts.model.cache.cities.list = arr(response.city);
+			console.log("[CACHE] Cities=" + opts.model.cache.cities.list.length);
+
+			opts.model.cache.cities.list.forEach(function(city){
+				opts.model.cache.cities.id[city.id] = city;
+			});
+
+			this.blockLoaded();
+		}
+	);
+}
+
+
+
+opts.model.cache.deliveries = {};
+opts.model.cache.deliveries.id = {};
+opts.model.cache.deliveries.list = [];
+this.getDeliveries = function(){
+	opts.model.gate.command("/delivery/list",
+		[opts.model.session, opts.model.lang],
+		(response) => {
+			opts.model.cache.deliveries.list = arr(response.deliveries);
+			console.log("[CACHE] Deliveries=" + opts.model.cache.deliveries.list.length);
+// 		  console.log(opts.model.cache.deliveries.list);
+
+			opts.model.cache.deliveries.list.forEach(function(delivery){
+				opts.model.cache.deliveries.id[delivery.id] = delivery;
+				delivery.dateCreated = new Date(delivery.created);
+				delivery.createdString = delivery.dateCreated.getFullYear() + "-" + ('0' + (delivery.dateCreated.getMonth()+1)).slice(-2) + "-" + ('0' + delivery.dateCreated.getDate()).slice(-2);
+// 			  opts.model.delivery.actions.addHandlers(delivery);
+
+
+				delivery.weight /= 1000;
+				delivery.weight = delivery.weight.toFixed(3);
+
+
+				delivery.volume /= 1000000;
+				delivery.volume = delivery.volume.toFixed(3);
+			});
+
+			this.blockLoaded();
+		}
+	);
+}
+
+
+opts.model.cache.deliveryStatus = {};
+opts.model.cache.deliveryStatus.id = {};
+opts.model.cache.deliveryStatus.list = [];
+this.getDeliveryStatuses = function(){
+	opts.model.gate.command("/delivery/status/list",
+		[opts.model.lang],
+		(response) => {
+			opts.model.cache.deliveryStatus.list = arr(response.status);
+			console.log("[CACHE] DeliveryStatuses=" + opts.model.cache.deliveryStatus.list.length);
+
+			opts.model.cache.deliveryStatus.list.forEach(function(status){
+				opts.model.cache.deliveryStatus.id[status.id] = status;
+			});
+
+			this.blockLoaded();
+		}
+	);
+}
+
+
+
+this.blockToLoad = 7;
+this.blockLoaded = function(){
+	this.blockToLoad--;
+
+	if(this.blockToLoad == 0){
+		riot.mount("slot_dashboard", "deliveries",	{model:opts.model});
+	}
+
+	console.log("[CACHE] countdown: " + this.blockToLoad);
+}
+
+
+
+
+
+
+
+
+this.logout = function(){
+	console.log("logout()");
+
+	removeCookie("SID");
+	location.reload();
+};
+
+
+
+this.switchLang = function(lang){
+//   console.log(lang);
+	return function (){switchLang(lang)};
+}
+
+this.on('mount', ()=>{
+	console.log("[DASHBOARD]");
+	opts.model.i18n.localize();
+
+	this.getCountries();
+	this.getZips();
+	this.getRegions();
+	this.getRegionTypes();
+	this.getCities();
+	this.getDeliveryStatuses();
+	this.getDeliveries();
+
+	setTimeout(this.hideLeftMenu, 500);
+
+	riot.update();
+})
+
+
+</dashboard>

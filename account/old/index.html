@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html ng-app="peektime" ng-controller="globalCtrl" lang='ru'>
+
+<head>
+   <title>DWExpress - Административная панель</title>
+   <meta name=viewport content="width=device-width, initial-scale=1">
+   <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+   <meta name="robots" content="index, follow" />
+   <meta name="keywords" content="" />
+   <meta name="description" content="Административная панель" />
+
+   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+   <script src="https://code.jquery.com/ui/1.11.3/jquery-ui.min.js"></script>
+   <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.0/angular.js"></script>
+   <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.0/angular-animate.js"></script>
+   <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.0/angular-cookies.js"></script>
+
+
+
+   <link href="css/main.css" rel="stylesheet" type="text/css">
+   <link rel="canonical" href="url" />
+
+
+   <script src="https://www.google.com/recaptcha/api.js?onload=vcRecaptchaApiLoaded&render=explicit" async defer></script>
+   <script src="js/angular-recaptcha.js"></script>
+   <script src="js/angular-dragdrop.js"></script>
+   <script src="js/clipboard.min.js"></script>
+   <script src="js/ngclipboard.min.js"></script>
+   <script src="js/angular-fullscreen.js"></script>
+</head>
+
+
+<script>
+   var app = angular.module('peektime', ['ngAnimate', 'ngCookies', 'vcRecaptcha', 'ngDragDrop','ngclipboard','FBAngular']);
+
+
+   app.config(function($animateProvider) {
+     $animateProvider.classNameFilter(/p-animated/);
+   })
+
+   app.config(function($sceDelegateProvider) {
+
+     $sceDelegateProvider.resourceUrlWhitelist([
+      // Allow same origin resource loads.
+      'self',
+      // Allow loading from our assets domain.  Notice the difference between * and **.
+      'https://rec.peektime.com/**'
+     ]);
+
+   });
+
+
+ app.directive('blockOnRender', function ($blockUI) {
+    return {
+        restrict: 'A',
+        link: function (scope, element, attrs) {
+
+            if (scope.$first) {
+                $blockUI.blockElement($(element).parent());
+            }
+            if (scope.$last) {
+                $blockUI.unblockElement($(element).parent());
+            }
+        }
+    };
+ });
+
+
+ app.directive('pager', ['$timeout', function($timeout) {
+    return{
+       restrict: 'E',
+       link: function(scope, elem, attrs){
+
+          scope.click = function(){
+/*
+             if(scope.disabled){
+             }
+             else{
+                scope.variable = !scope.variable;
+                $timeout(scope.callback);
+             }
+*/
+          };
+       },
+       replace: 'true',
+       scope: { length:'=', page:'=', limit:'='},
+       templateUrl: 'directives/pager.html',
+       controller: function($scope){
+          //$timeout(function(){alert($scope.listDeliveries.length)});
+
+          var iMax;
+
+          $scope.max = function(){
+             iMax = Math.floor($scope.length / $scope.limit);
+             return iMax;
+          };
+
+          $timeout(function(){
+             if(iMax > $scope.page) $scope.page = 0;
+             try{
+                $apply();
+             }
+             catch(e){
+             };
+          });
+/*
+          $scope.width  = angular.isDefined($scope.width) ? $scope.width : 48;
+          $scope.height = angular.isDefined($scope.height) ? $scope.height : 20;
+*/
+       }
+    };
+ }]);
+
+
+
+app.directive('convertToNumber', function() {
+  return {
+    require: 'ngModel',
+    link: function(scope, element, attrs, ngModel) {
+      ngModel.$parsers.push(function(val) {
+        return parseInt(val, 10);
+      });
+      ngModel.$formatters.push(function(val) {
+        return '' + val;
+      });
+    }
+  };
+});
+
+
+
+
+   app.controller('globalCtrl', function($scope, $http, $locale, $cookies, $location, $timeout, $interval, $compile){
+      $scope.server = {};
+      $scope.server.loading = true;
+
+      $scope.server.request = function(sURL, params, callback){
+         var sFullURL = "/dealwd_delivery_rest" + sURL;
+
+         params.forEach(function (sParam){
+            sFullURL += "/" + encodeURIComponent(sParam);
+         });
+
+         console.log(sFullURL);
+
+
+         $http.get(sFullURL)
+            .success(function(response){
+               if(response.operationCode == 1001){
+                  $cookies.remove("SID");
+                  window.location.reload();
+               }
+               callback(response)
+            })
+            .error(function(response){
+               if(response == null){
+               }
+               else{
+               }
+               callback({"operationCode":9});
+            });
+      };
+
+
+
+
+      $scope.nav = function(){
+         console.log("nav() ");
+         console.log(arguments);
+
+         if(arguments.length == 1 && arguments[0].split(",").length > 1){
+            $scope.nav.page = arguments[0].split(",");
+            if($scope.nav.page[1].startsWith("new")){
+               $scope.nav.page[1] = "parcels";
+            }
+         }
+         else{
+            $scope.nav.page = arguments;
+         }
+
+         var sPath = "";
+         for(var i = 0; i < $scope.nav.page.length; i++) {
+            if(sPath.length > 0){
+                sPath += ",";
+            }
+
+            if($scope.nav.page[i] == 'shipment_edit'){
+               sPath += 'shipments';
+            }
+            else{
+               sPath += $scope.nav.page[i];
+            }
+         }
+
+         $cookies.put("page", sPath);
+      };
+
+
+
+      $scope.lang = $cookies.get("lang");
+      if(angular.isUndefined($scope.lang)){
+         $scope.lang = (navigator.languages ? navigator.languages[0] : (navigator.language || navigator.userLanguage)).toUpperCase().split('-')[0];
+      }
+
+      console.log("browser lang=" + $scope.lang);
+
+
+      $scope.dateLongCookie = new Date();
+      $scope.dateLongCookie.setDate($scope.dateLongCookie.getDate() + 365);
+
+
+      $scope.profile = {};
+
+
+      if($cookies.get("SID") == null){
+         console.log("SID:" + "no session");
+         $scope.nav("login");
+      }
+      else{
+         console.log("SID:" + $cookies.get("SID"));
+
+         $scope.server.request("/user/profile",
+                               [$cookies.get("SID")],
+                               function(response){
+                                  if(response.operationCode == 0){
+                                     console.log("SID: valid");
+                                     $scope.profile = response;
+                                     $scope.profile.SID = $cookies.get("SID");
+
+                                     if($cookies.get("page") == null){
+                                        $scope.nav("dashboard", "parcels");
+                                     }
+                                     else{
+                                        $scope.nav($cookies.get("page"));
+                                     }
+                                  }
+                                  else{
+                                     $scope.nav("login");
+                                  }
+                               });
+      }
+   });
+</script>
+
+
+<script src="controllers/login.js"></script>
+<script src="controllers/dashboard.js"></script>
+<script src="controllers/list_parcels.js"></script>
+<script src="controllers/list_shipments.js"></script>
+<script src="controllers/new_parcel.js"></script>
+<script src="controllers/shipment_edit.js"></script>
+
+
+
+<body>
+   <div ng-if="nav.page[0] =='login'"     ng-include="'templates/login.html'"     ng-controller="login"         id="login"     style="width:100%;height:100%"></div>
+   <div ng-if="nav.page[0] =='dashboard'" ng-include="'templates/dashboard.html'" ng-controller="dashboardCntr" id="dashboard" style="width:100%;height:100%"></div>
+
+
+   <div ng-if="server.loading" class="loader w100" id='loader'>
+      <section>
+         <div class='sk-fading-circle'>
+            <div class='sk-circle sk-circle-1'></div>
+            <div class='sk-circle sk-circle-2'></div>
+            <div class='sk-circle sk-circle-3'></div>
+            <div class='sk-circle sk-circle-4'></div>
+            <div class='sk-circle sk-circle-5'></div>
+            <div class='sk-circle sk-circle-6'></div>
+            <div class='sk-circle sk-circle-7'></div>
+            <div class='sk-circle sk-circle-8'></div>
+            <div class='sk-circle sk-circle-9'></div>
+            <div class='sk-circle sk-circle-10'></div>
+            <div class='sk-circle sk-circle-11'></div>
+            <div class='sk-circle sk-circle-12'></div>
+         </div>
+      </section>
+   </div>
+
+
+   <div ng-if="server.error" class="modal error w100" id='error'>
+      <div class="modal-out">
+         <div class="modal-in">
+            <a class='close' href="#"><img src="img/close.png" alt=""></a>
+            <div class="flex">
+               <img src="img/error.png" alt="">
+               <div class="text">
+                  <h3>Error: Название ошибки</h3>
+                  <p>Краткое описание ошибки и что с этим делать</p>
+               </div>
+            </div>
+         </div>
+      </div>
+   </div>
+</body>
+
+</html>

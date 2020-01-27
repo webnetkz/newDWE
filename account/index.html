@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang='ru'>
+
+<head>
+   <title>DWExpress - Административная панель</title>
+   <meta name=viewport content="width=device-width, initial-scale=1">
+   <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+   <meta name="robots" content="index, follow" />
+   <meta name="keywords" content="" />
+   <meta name="description" content="Административная панель" />
+
+   <script src="js/jquery-1.12.4.js"></script>
+   <script src="js/jquery-ui.js"></script>
+   <script src="js/jquery.cookie.js"></script>
+   <script src="js/jquery.toast.min.js"></script>
+   <script src="js/riot+compiler.min.js"></script>
+
+
+   <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+   <link href="css/main.css" rel="stylesheet" type="text/css">
+
+   <link rel="canonical" href="url" />
+</head>
+
+
+<script src="tags/login/login.html"               type="riot/tag"></script>
+<script src="tags/login/password_recovery.html"   type="riot/tag"></script>
+<script src="tags/registration/registration.html" type="riot/tag"></script>
+<script src="tags/dashboard/dashboard.html"       type="riot/tag"></script>
+<script src="tags/dashboard/deliveries/list.html" type="riot/tag"></script>
+<script src="tags/dashboard/deliveries/new.html"  type="riot/tag"></script>
+<script src="tags/loading.html"                   type="riot/tag"></script>
+<script src="tags/error.html"                     type="riot/tag"></script>
+
+
+<script>
+
+
+//Let's do it manually
+function setCookie(key, value) {
+    var expires = new Date();
+    expires.setTime(expires.getTime() + (1 * 24 * 60 * 60 * 1000));
+    document.cookie = key + '=' + value + ';expires=' + expires.toUTCString();
+}
+function getCookie(key) {
+    var keyValue = document.cookie.match('(^|;) ?' + key + '=([^;]*)(;|$)');
+    return keyValue ? keyValue[2] : null;
+}
+function removeCookie(key) {
+    var expires = new Date();
+    expires.setTime(0);
+    document.cookie = key + '=;expires=' + expires.toUTCString();
+}
+
+
+function switchLang(lang){
+   console.log("switchLang() -> " + lang);
+   setCookie("lang", lang);
+   location.reload();
+}
+
+
+function arr(object){
+   if(object == undefined || object == null){
+      return [];
+   }
+   else{
+      return object;
+   }
+}
+
+
+
+function tag(tag, value){
+   //alert(document.getElementsByTagName(tag).constructor.name);
+   var list = document.getElementsByTagName(tag);
+
+   for (var i = 0; i < list.length; i++) {
+      list[i].innerHTML = value;
+   }
+}
+
+
+function formatDate(date){
+   var dateObject;
+   if(date instanceof Date){
+      dateObject = date;
+   }
+   else{
+      dateObject = new Date(date);
+   }
+   return ('0' + dateObject.getDate()).slice(-2) + '.' + ('0' + (dateObject.getMonth()+1)).slice(-2) + '.' + dateObject.getFullYear();
+}
+function formatDateTime(date){
+   var dateObject;
+   if(date instanceof Date){
+      dateObject = date;
+   }
+   else{
+      dateObject = new Date(date);
+   }
+   return ('0' + dateObject.getDate()).slice(-2) + '.' + ('0' + (dateObject.getMonth()+1)).slice(-2) + '.' + dateObject.getFullYear() + " / " + dateObject.getHours() + ":" + ('0' + dateObject.getMinutes()).slice(-2);
+}
+
+
+riot.compile(function(){
+   console.log("compile done, let's start!");
+
+
+   var model = {};
+
+   model.gate = {};
+   model.gate.url = "/account/rest";
+
+
+   model.i18n = {};
+   model.i18n.localize = function(root){
+      if(root == null){
+         $("i18n").each(function(){
+            if(this.i18n == null){
+               this.i18n = this.innerHTML;
+            }
+
+            if(model.i18n.keys[this.i18n] == undefined){
+               this.innerHTML = this.i18n;
+            }
+            else{
+               this.innerHTML = model.i18n.keys[this.i18n];
+            }
+         });
+      }
+      else{
+         $(root + " i18n").each(function(){
+            if(this.i18n == null){
+               this.i18n = this.innerHTML;
+            }
+
+            if(model.i18n.keys[this.i18n] == undefined){
+               this.innerHTML = this.i18n;
+            }
+            else{
+               this.innerHTML = model.i18n.keys[this.i18n];
+            }
+         });
+      }
+   };
+   model.i18n.getTranslation = function(key, parameter){
+      var sValue = model.i18n.keys[key];
+
+      if(sValue == undefined) return key;
+
+      if(parameter != null) sValue = sValue.replace("%1", parameter);
+      return sValue;
+   }
+   model.i18n.v = function(key, parameter){
+      return model.i18n.getTranslation(key, parameter);
+   }
+
+
+   model.setLoading = (isVisiable)=>{
+      if(isVisiable){
+         model.loading = riot.mount("loading_slot", "loading", {model:model});
+      }
+      else{
+         if(model.loading){
+            model.loading[0].unmount();
+            delete(model.loading);
+         }
+      }
+   }
+
+
+   //server entry point
+   model.gate.command = (sURL, params, callback)=>{
+      var sFullURL = model.gate.url + sURL;
+
+      params.forEach(function (sParam){
+         sFullURL += "/" + encodeURIComponent(sParam);
+      });
+
+      console.log(sFullURL);
+
+
+      $.ajax(sFullURL, {
+         headers: {
+           'Accept':'application/json'
+         },
+         success: function(response){
+            console.log(response.operationCode + " [" + response.requestID + "]");
+            if(response.operationCode == 1001){
+               if(getCookie("SID") == null){
+                  //ok, no session
+               }
+               else{
+                  removeCookie("SID");
+                  window.location.reload();
+               }
+            }
+            callback(response)
+         },
+         error: function(){
+            callback({"operationCode":9});
+         }
+      });
+   };
+
+
+
+
+   model.gate.command("/time/get/current",
+      [],
+      function(response){
+         model.date = {};
+         model.date.time = response.time;
+         model.date.date = new Date(response.time);
+         console.log("current time=" + model.date.date);
+
+
+         model.gate.command("/lang/list",
+            [],
+            function(response){
+               console.log("Langs available:");
+               console.log(response.lang);
+               model.langs = response.lang;
+
+               model.lang = $.cookie("lang");
+               if(model.lang == null){
+                  model.lang = (navigator.languages ? navigator.languages[0] : (navigator.language || navigator.userLanguage)).toUpperCase().split('-')[0];
+
+                  if(response.lang.includes(model.lang)){
+                     console.log("ok, " + model.lang + " is supported");
+                  }
+                  else{
+                     console.log("Let's swtich to EN.");
+                     model.lang = "EN";
+                  }
+               }
+               model.gate.command("/i18n",
+                  [model.lang],
+                  function(response){
+                     model.i18n.keys = response.i18n;
+
+                     document.title = model.i18n.getTranslation("global.page.title");
+
+
+                     if(getCookie("SID") == null){
+                        riot.mount("root_slot", "login", {model:model});
+                     }
+                     else{
+                        model.gate.command("/user/profile",
+                           [getCookie("SID")],
+                           function(response){
+                              console.log("SID: valid");
+
+                              model.user = response;
+                              model.session = getCookie("SID");
+
+                              riot.mount("root_slot", "dashboard", {model:model});
+                           }
+                        );
+                     }
+                  }
+               );
+            }
+         );
+      }
+   );
+
+//   riot.mount("root_slot",    "login",   {model:model});
+//   riot.mount("loading_slot", "loading", {model:model});
+//   riot.mount("error_slot",   "error",   {model:model});
+
+});
+
+</script>
+
+
+<body>
+
+   <div style="width:100%;height:100%">
+      <root_slot></root_slot>
+      <loading_slot></loading_slot>
+      <error_slot></error_slot>
+   </div>
+
+
+</body>
+
+</html>

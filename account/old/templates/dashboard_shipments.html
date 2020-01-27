@@ -1,0 +1,125 @@
+<div class="title">
+   <h1>Мои партии</h1>
+   <a class='archive' href="">
+      <img src="img/archive-icon.png" alt="">
+      <span>Архив партий</span>
+   </a>
+</div>
+<div class="sort">
+   <form action="sort.php" method="post">
+      <label class='checkbox' for="selectAll">
+         <input type="checkbox" name='selectAll' id='selectAll' checked>
+         <span class='checkbox__text'>Выбрать все</span>
+      </label>
+      <select name="doings" id="doings">
+         <option>Действия</option>
+         <option value="1">Действие 1</option>
+         <option value="2">Действие 2</option>
+         <option value="3">Действие 4</option>
+         <option value="4">Действие 4</option>
+      </select>
+      <button class='cont'>Продолжить</button>
+   </form>
+   <a ng-click="newShipment()" class='create v1'>Создать партию</a>
+</div>
+<form class="table">
+   <table>
+      <thead>
+         <tr>
+            <td style='min-width: 60px;'></td>
+            <td style='min-width: 120px;'>Номер партии</td>
+            <td style='min-width: 113px;'>
+               <div class="flex"><span>Страна<br>получателя</span> <a href=""><img src="img/sort.png" alt=""></a></div>
+            </td>
+            <td style='min-width: 122px;'>Статус</td>
+            <td style='min-width: 113px;'>
+               <div class="flex"><span>Дата отправки</span> <a href=""><img src="img/sort.png" alt=""></a></div>
+            </td>
+            <td style='min-width: 103px;'>
+               <div class="flex"><span>Кол-во мест</span> <a href=""><img src="img/sort.png" alt=""></a></div>
+            </td>
+            <td style='min-width: 71px;'>
+               <div class="flex"><span>Вес</span> <a href=""><img src="img/sort.png" alt=""></a></div>
+            </td>
+            <td style='min-width: 93px;'>
+               <div class="flex"><span>Объем</span> <a href=""><img src="img/sort.png" alt=""></a></div>
+            </td>
+
+            <td style='min-width: 70px;'></td>
+
+            <td rowspan='2' style='min-width: 70px;'>
+               <a href="#addlist" class='add-package'>+</a>
+            </td>
+         </tr>
+         <tr>
+            <td></td>
+            <td><input type="text" ng-model="filters.number" name='part-number'></td>
+            <td>
+               <select ng-model="filters.country" name="part-country">
+                  <option></option>
+                  <option ng-repeat="country in cache.countries.list" ng-value="{{country.id}}">{{country.code}}</option>
+               </select>
+            </td>
+            <td>
+               <select name="part-status">
+                  <option></option>
+                  <option ng-repeat="status in cache.shipments.status.list" ng-value="status.id">{{status.name}}</option>
+               </select>
+            </td>
+            <td><input type="date" name='part-date'></td>
+            <td><input type="text" ng-model="filters.places" name='pack-weight'></td>
+            <td><input type="text" ng-model="filters.weight" name='pack-weight'></td>
+            <td><input type="text" ng-model="filters.volume" name='pack-v'></td>
+
+
+            <td></td>
+         </tr>
+      </thead>
+      <tbody>
+         <tr ng-repeat="shipment in cache.shipments.list | filter:{number:    filters.number}
+                                                         | filter:{countryTo: filters.country}
+                                                         | filter:{places:    filters.places}
+                                                         | filter:{weight:    filters.weight}
+                                                         | filter:{volume:    filters.volume}
+                                                         | limitTo: 10 : 0">
+            <td>
+               <label class='checkbox' for="p1">
+                  <input type="checkbox" name='p1' id='p1'>
+                  <span class='checkbox__text'></span>
+               </label>
+            </td>
+            <td>{{shipment.id}}</td>
+            <td>{{cache.countries.id[shipment.countryTo].code}}</td>
+            <td class='alert'>{{cache.shipments.status.id[shipment.status].name}}</td>
+            <td>12.05.2018</td>
+            <td>{{shipment.places}}</td>
+            <td>{{shipment.weight}} кг</td>
+            <td>{{shipment.volume}} м2</td>
+
+
+            <td class='bt'>
+               <a ng-click="shipment.edit()" class="click"><img src="img/icon-edit.png" alt=""></a>
+            </td>
+            <td class='bt'>
+               <a ng-click="actions.delete(shipment)" class="click"><img src="img/icon-del.png" alt=""></a>
+            </td>
+         </tr>
+      </tbody>
+   </table>
+</form>
+
+<pager></pager>
+
+<div ng-if="actions.delete.isVisible" class="modal w100" id='delete'>
+   <div class="modal-out">
+      <div class="modal-in">
+         <a ng-click="actions.no()" class='close'><img src="img/close.png" alt=""></a>
+         <h3>Удалить партию?</h3>
+         <p>Вы уверены, что хотите безвозвратно<br>удалить партию {{actions.id}}?</p>
+         <div class="flex">
+            <a ng-click="actions.yes()" class='cont err' href="">Да, удалить</a>
+            <a ng-click="actions.no()"  class='cont' href="#">Нет</a>
+         </div>
+      </div>
+   </div>
+</div>

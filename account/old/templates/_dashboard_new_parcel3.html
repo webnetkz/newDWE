@@ -1,0 +1,72 @@
+<div class="title">
+   <h1>Создание отправления</h1>
+</div>
+<div class="create_form">
+   <div class="flex_form sb">
+      <div class="l">
+         <h2>Данные отправителя</h2>
+         <p>Семенов Иван Владимирович</p>
+         <p>+7 829 33 99 22</p>
+      </div>
+      <div class="l">
+         <h2>Данные получателя</h2>
+         <p>Семенов Иван Владимирович</p>
+         <p>+7 829 33 99 22</p>
+      </div>
+      <div class="r">
+         <h2>Адрес доставки</h2>
+         <p>Семенов Иван Владимирович</p>
+         <p>+7 829 33 99 22</p>
+      </div>
+   </div>
+   <div class="pckg">
+      <h2>Отправление</h2>
+      <p class='vSum'><span>Места</span><span>2</span></p>
+      <p class='vSum'><span>Вес</span><span>23 кг</span></p>
+      <p class='vSum'><span>Объем</span><span>23 м<sup>3</sup></span></p>
+   </div>
+   <div class="addPhotos">
+      <p>Прикрепленые фото</p>
+      <div class="photos">
+         <div class="photo">
+            <img src="img/no-photo2.png" alt="">
+         </div>
+         <div class="photo">
+            <img src="img/no-photo2.png" alt="">
+         </div>
+         <div class="photo">
+            <img src="img/no-photo2.png" alt="">
+         </div>
+      </div>
+   </div>
+   <div class="addFiles">
+      <p>Прикрепленые файлы</p>
+      <div class="files">
+         <div class="file">
+            <a href=''>asdaksdhaklsjdh.docx</a>
+         </div>
+         <div class="file">
+            <a href=''>asdaksdhaklsjdh.docx</a>
+         </div>
+         <div class="file">
+            <a href=''>asdaksdhaklsjdh.docx</a>
+         </div>
+      </div>
+   </div>
+   <form class="btns">
+      <a ng-click="nav('dashboard','new_parcel2')" class='v1 small err' href="">Назад</a>
+      <div class="rr">
+         <label class='checkbox' for="print1">
+            <input type="checkbox" name='rememberMe' id='print1'>
+            <span class='checkbox__text'>Печать бланка</span>
+         </label>
+         <label class='checkbox' for="print2">
+            <input type="checkbox" name='rememberMe' id='print2'>
+            <span class='checkbox__text'>Печать счета</span>
+         </label>
+         <a href="" class='print-info'><img src="img/question-icon.png" alt=""></a>
+         <button class='v1 small'>На упаковку</button>
+         <a ng-click="nav('dashboard','parcels')" class='v1 small err' href=""><img src="img/delicon.png" alt=""> Удалить</a>
+      </div>
+   </form>
+</div>

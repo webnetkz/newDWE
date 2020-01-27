@@ -1,0 +1,20 @@
+<div ng-show="max() > 0" class="pagination mt">
+
+<!--
+   {{length}} {{max()}} {{page}} {{limit}}
+-->
+
+<!--
+   <a ng-show="page > 0"       ng-click="page = 0" class="prev click"><img src="img/blue-arrow-left.png" alt=""></a>
+-->
+   <a ng-show="page > 0"       ng-click="page = page - 1" class="prev click"><img src="img/blue-arrow-left.png" alt=""></a>
+   <a ng-show="page > 0"       ng-click="page = page - 1">{{page}}</a>
+   <a class="select">{{page + 1}}</a>
+   <a ng-show="page < max()"     ng-click="page = page + 1" class="click">{{page + 2}}</a>
+   <a ng-show="max() - page > 5" ng-click="page = page + floor((max() - page) / 2)" class="click">...</a>
+   <a ng-show="page < max()"     ng-click="page = max()">{{max() + 1}}</a>
+   <a ng-show="page < max()"     ng-click="page = page + 1" class="next click"><img src="img/blue-arrow-right.png" alt=""></a>
+<!--
+   <a ng-show="page < max()"     ng-click="page = max()"      class="next click"><img src="img/blue-arrow-right.png" alt=""></a>
+-->
+</div>

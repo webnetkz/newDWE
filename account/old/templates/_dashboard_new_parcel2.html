@@ -1,0 +1,81 @@
+<div class="title">
+   <h1>Создание отправления</h1>
+</div>
+<form class="create_form">
+   <div class="flex_form sb">
+      <div class="l">
+         <h2>Данные отправителя</h2>
+         <p>Семенов Иван Владимирович</p>
+         <p>+7 829 33 99 22</p>
+      </div>
+      <div class="l">
+         <h2>Данные получателя</h2>
+         <p>Семенов Иван Владимирович</p>
+         <p>+7 829 33 99 22</p>
+      </div>
+      <div class="r">
+         <h2>Адрес доставки</h2>
+         <p>Семенов Иван Владимирович</p>
+         <p>+7 829 33 99 22</p>
+      </div>
+   </div>
+   <div class="pckg">
+      <h2>Посылка</h2>
+
+      <input type="text" name='name' placeholder="Кол-во мест, шт *">
+      <input type="text" name='name' placeholder="Вес, кг *" required>
+      <div class="fl">
+         <input type="text" name='name' placeholder="Высота, м *" required>
+         <input type="text" name='name' placeholder="Глубина, м *" required>
+         <input type="text" name='name' placeholder="Ширина, м *" required>
+      </div>
+      <p class='vSum'><span>Объем</span><span><b>23 м<sup>3</sup></b></span></p>
+      <input type="text" name='name' placeholder="Другое">
+      <textarea name="" id="" cols="30" rows="10" placeholder="Описание товара"></textarea>
+   </div>
+   <div class="addPhotos">
+      <label class='fileInput'>
+           <input type="file" name="file">
+           <span><img src="img/icon-image.png" alt="">Добавить фото</span>
+       </label>
+      <div class="photos">
+         <div class="photo">
+            <img src="img/no-photo2.png" alt="">
+            <a href=""><img src="img/delete_photo.png" class='delphoto' alt=""></a>
+         </div>
+         <div class="photo">
+            <img src="img/no-photo2.png" alt="">
+            <a href=""><img src="img/delete_photo.png" class='delphoto' alt=""></a>
+         </div>
+         <div class="photo">
+            <img src="img/no-photo2.png" alt="">
+            <a href=""><img src="img/delete_photo.png" class='delphoto' alt=""></a>
+         </div>
+      </div>
+   </div>
+   <div class="addFiles">
+      <label class='fileInput'>
+           <input type="file" name="file">
+           <span><img src="img/icon-image.png" alt="">Добавить файл</span>
+       </label>
+      <div class="files">
+         <div class="file">
+            <a href=''>asdaksdhaklsjdh.docx</a>
+            <a href=""><img src="img/delete_photo.png" class='delfile' alt=""></a>
+         </div>
+         <div class="file">
+            <a href=''>asdaksdhaklsjdh.docx</a>
+            <a href=""><img src="img/delete_photo.png" class='delfile' alt=""></a>
+         </div>
+         <div class="file">
+            <a href=''>asdaksdhaklsjdh.docx</a>
+            <a href=""><img src="img/delete_photo.png" class='delfile' alt=""></a>
+         </div>
+      </div>
+   </div>
+   <a href="" class="cont big">Добавить</a>
+   <div class="btns">
+      <a ng-click="nav('dashboard','new_parcel')"       class='v1 small err' href="">Назад</a>
+      <button ng-click="nav('dashboard','new_parcel3')" class='v1 small'>Далее</button>
+   </div>
+</form>

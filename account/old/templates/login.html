@@ -1,0 +1,60 @@
+<div class="login w100">
+   <div class="w100 login-header">
+      <div class="container">
+         <div class="logo">
+            <img src="img/logo.png" alt="">
+            <div class="line"></div>
+            <h1>АДМИНИСТРАТИВНАЯ<br>ПАНЕЛЬ</h1>
+         </div>
+         <a class='phone' href="tel:+7(961)8144448">
+            <img src="img/phone-icon.png" alt="">
+            <span>+7 (961) 814-44-48</span>
+         </a>
+      </div>
+   </div>
+   <div class="login-content w100">
+      <div class="login-form">
+         <h2>Вход</h2>
+         <form action="" ng-submit="login($event)">
+            <input type="text"     ng-model="form.login"    name='email' required placeholder="Электронная почта">
+            <input type="password" ng-model="form.password" name='password' required placeholder="Пароль">
+            <div class="flex">
+               <label class='checkbox' for="rememberMe">
+                  <input type="checkbox" name='rememberMe' id='rememberMe'>
+                  <span class='checkbox__text'>Запомнить меня</span>
+               </label>
+               <a href="#forget">Забыли пароль</a>
+            </div>
+            <button class='v1'>Войти</button>
+         </form>
+      </div>
+   </div>
+   <div class="login-footer w100">
+      <div class="container">
+         <p>© DWExpress</p>
+      </div>
+   </div>
+</div>
+
+<div ng-if="recovery.isDialog" class="modal password-recovery w100" id='forget'>
+   <div class="modal-out">
+      <div class="modal-in">
+         <a class='close' href="#"><img src="img/close.png" alt=""></a>
+         <h3>Востановление пароля</h3>
+         <form action="pass.php" method="post">
+            <input type="email" name='email' required placeholder="Электронная почта">
+            <button class='v1'>Восстановить</button>
+         </form>
+      </div>
+   </div>
+</div>
+<div ng-if="recovery.isConfirmation" class="modal password-recovery w100" id='forget2'>
+   <div class="modal-out">
+      <div class="modal-in">
+         <a class='close' href="#"><img src="img/close.png" alt=""></a>
+         <h3>Востановление пароля</h3>
+         <p>На почту <a href="mailto:test@test.com">test@test.com</a> отправлено письмо<br>с инструкцией по восановлению пароля</p>
+         <a class='cont' href="#">Продолжить</a>
+      </div>
+   </div>
+</div>
