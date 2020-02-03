@@ -57,7 +57,9 @@ $phone1wp = '79161352444';
 		<div class="w100 siteTop" id='siteTop'>
 			<div class="container">
 				<div class="logos">
-					<img class='logo' src='img/logo.png' alt=''>
+					<a href="https://dw.express">
+						<img class='logo' src='img/logo.png' alt=''>
+					</a>
 					<!--<p>С‚С‹СЃСЏС‡Рё РєРёР»РѕРјРµС‚СЂРѕРІ СѓСЃРїРµС…Р°</p>-->
 				</div>
 				<div class="mid">
