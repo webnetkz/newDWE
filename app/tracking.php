@@ -41,8 +41,16 @@ curl_setopt($url, CURLOPT_POSTFIELDS, $request);
 $response = curl_exec($url);
 
 $xml = simplexml_load_string($response);
-
-$_SESSION['order'] = (string)$xml->order['orderno'];
+if(!empty($xml->order)) {
+    $_SESSION['tracking'] = (string)$xml->order['orderno'];
+    $_SESSION['datefrom'] = (string)$xml->order->sender->date;
+    $_SESSION['townfrom'] = (string)$xml->order->sender->town;
+    $_SESSION['dateto'] = (string)$xml->order->receiver->town;
+    $_SESSION['townto'] = (string)$xml->order->receiver->town;
+    $_SESSION['mass'] = (string)$xml->order->weight;
+    $_SESSION['mest'] = (string)$xml->order->quantity;
+    $_SESSION['status'] = (string)$xml->order->status;
+}
 header('Location: ../tests/index.php');
 /*
 // Проверка на существующию посылку
